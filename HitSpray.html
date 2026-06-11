@@ -1,0 +1,3192 @@
+<!DOCTYPE html>
+<html lang="ko" id="html-root" data-page="hitspray">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>히트 스프레이 · Hit Spray</title>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        overflow-x: auto;
+      }
+      body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        background: #f1f5f9;
+        color: #0f172a;
+        padding: 16px;
+        overflow-x: auto;
+        min-width: 2532px;
+      }
+      .report {
+        width: 2500px;
+        max-width: none;
+        margin: 0 auto;
+        flex-shrink: 0;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+      }
+      .row {
+        padding: 12px 16px;
+        background: #fff;
+      }
+      .row--csv {
+        min-height: 100px;
+        padding: 10px 16px;
+      }
+      .row--name {
+        position: relative;
+        min-height: 190px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 16px 12px;
+        overflow: visible;
+      }
+      /* html2canvas가 transform을 잘못 잘라내서, 세로 중앙은 margin:auto 방식만 사용 */
+      .batter-header-photo-slot {
+        position: absolute;
+        left: 300px;
+        top: 0;
+        bottom: 0;
+        margin-top: auto;
+        margin-bottom: auto;
+        width: 150px;
+        height: 150px;
+        border-radius: 6px;
+        background: transparent;
+        overflow: hidden;
+      }
+      .batter-header-photo-slot img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+      }
+      .batter-header-photo-slot img.is-pfp-missing {
+        display: none;
+      }
+      .batter-header-wbd-emblem {
+        position: absolute;
+        right: 300px;
+        top: 0;
+        bottom: 0;
+        margin-top: auto;
+        margin-bottom: auto;
+        width: 150px;
+        height: 150px;
+        border-radius: 6px;
+        background: transparent;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+        padding: 6px;
+      }
+      .batter-header-wbd-emblem img {
+        display: block;
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        object-position: center;
+      }
+      .batter-header-stack {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        max-width: 100%;
+      }
+      .batter-select-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 4px;
+      }
+      .batter-select-row[hidden] {
+        display: none !important;
+      }
+      .batter-select-row label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #475569;
+      }
+      #batter-select {
+        min-width: 200px;
+        max-width: 420px;
+        padding: 8px 10px;
+        font-size: 14px;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        background: #fff;
+        color: #0f172a;
+      }
+      .batter-name-line {
+        font-size: 2.35rem;
+        font-weight: 700;
+        color: #0f172a;
+        line-height: 1.2;
+        word-break: break-word;
+      }
+      .batter-hand {
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: #334155;
+        margin-left: 10px;
+        letter-spacing: 0.04em;
+      }
+      .batter-report-heading {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #64748b;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        margin-top: 4px;
+      }
+      .batter-wbd-line {
+        font-size: 0.95rem;
+        font-weight: 800;
+        color: #0f172a;
+        letter-spacing: 0.2em;
+        margin-top: 2px;
+      }
+      .row--stats {
+        min-height: 72px;
+        padding: 10px 16px 12px;
+      }
+      .stats-table-wrap {
+        width: 100%;
+        overflow-x: auto;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        background: #fff;
+      }
+      .batter-stats-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 11px;
+        white-space: nowrap;
+      }
+      .batter-stats-table thead th {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background: #f1f5f9;
+        color: #334155;
+        font-weight: 700;
+        text-align: right;
+        padding: 8px 10px;
+        border-bottom: 1px solid #e2e8f0;
+        border-right: 1px solid #e2e8f0;
+      }
+      .batter-stats-table thead th:first-child {
+        text-align: left;
+        left: 0;
+        z-index: 2;
+      }
+      .batter-stats-table tbody th {
+        text-align: left;
+        font-weight: 700;
+        color: #0f172a;
+        padding: 6px 10px;
+        border-bottom: 1px solid #f1f5f9;
+        border-right: 1px solid #e2e8f0;
+        background: #fff;
+        position: sticky;
+        left: 0;
+        z-index: 1;
+        box-shadow: 1px 0 0 #e2e8f0;
+        white-space: normal;
+        line-height: 1.25;
+        max-width: 200px;
+        min-width: 120px;
+      }
+      .batter-stats-table tbody td {
+        text-align: right;
+        padding: 6px 10px;
+        color: #475569;
+        border-bottom: 1px solid #f1f5f9;
+        border-right: 1px solid #f1f5f9;
+      }
+      .batter-stats-table tbody tr:last-child th,
+      .batter-stats-table tbody tr:last-child td {
+        border-bottom: none;
+      }
+      .row--stats-legend {
+        padding: 10px 16px 14px;
+        background: #f8fafc;
+      }
+      .stats-legend-title {
+        font-size: 11px;
+        font-weight: 800;
+        color: #475569;
+        letter-spacing: 0.04em;
+        margin: 0 0 8px;
+      }
+      .stats-legend-dl {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px 20px;
+        font-size: 11px;
+        line-height: 1.45;
+        margin: 0;
+      }
+      .stats-legend-item {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        min-width: 0;
+      }
+      .stats-legend-item dt {
+        font-weight: 700;
+        color: #334155;
+        margin: 0;
+      }
+      .stats-legend-item dd {
+        margin: 0;
+        color: #64748b;
+      }
+      .row--spray {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0;
+        min-height: 700px;
+        padding: 0;
+      }
+      .spray-split-cell--full {
+        grid-column: 1 / -1;
+      }
+      .spray-split-cell {
+        padding: 8px 12px 12px;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+      .spray-split-cell--b {
+        align-self: start;
+      }
+      .spray-split-label {
+        text-align: center;
+        font-size: 13px;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 4px;
+      }
+      .spray-split-cell .row-title {
+        margin-bottom: 6px;
+      }
+      .spray-split-b-stack {
+        flex: 0 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        height: auto;
+        min-height: 684px;
+        max-height: none;
+        box-sizing: border-box;
+      }
+      .spray-split-b-pan {
+        flex: 1 1 0;
+        height: auto;
+        min-height: 104px;
+        max-height: none;
+        box-sizing: border-box;
+        border-radius: 6px;
+        background: #f8fafc;
+        border: 1px solid #f1f5f9;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        padding: 6px 8px 8px;
+        overflow: hidden;
+      }
+      .spray-split-b-sub {
+        font-size: 10px;
+        font-weight: 700;
+        color: #64748b;
+        text-align: center;
+        flex-shrink: 0;
+      }
+      .batcen-bar-canvas {
+        width: 100%;
+        height: 130px;
+        min-height: 130px;
+        max-height: 130px;
+        flex: 0 0 130px;
+        display: block;
+      }
+      .row-title {
+        font-size: 11px;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 6px;
+      }
+      .spray-wrap {
+        position: relative;
+        width: 100%;
+        height: 684px;
+        min-height: 420px;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        background: #f8fafc;
+      }
+      #spray-field-canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      .row--quad {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 0;
+        padding: 0;
+        min-height: 260px;
+      }
+      .row--quad-rose {
+        min-height: 400px;
+      }
+      .row--quad-rose .quad-cell {
+        min-height: 400px;
+      }
+      .row--quad-rose-spray {
+        min-height: 370px;
+      }
+      .row--quad-rose-spray .quad-cell {
+        min-height: 370px;
+      }
+      .quad-cell {
+        padding: 8px 6px 10px;
+        display: flex;
+        flex-direction: column;
+        min-height: 260px;
+        min-width: 0;
+      }
+      .quad-label {
+        text-align: center;
+        font-size: 13px;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 2px;
+      }
+      .quad-hint {
+        text-align: center;
+        font-size: 10px;
+        font-weight: 600;
+        color: #94a3b8;
+        margin-bottom: 6px;
+      }
+      .quad-section-title {
+        grid-column: 1 / -1;
+        font-size: 40px;
+        line-height: 1;
+        font-weight: 800;
+        color: #0f172a;
+        text-align: center;
+        padding: 40px 8px 36px;
+      }
+      .quad-section-title span {
+        display: block;
+        font-size: 10px;
+        font-weight: 600;
+        color: #64748b;
+        margin-top: 4px;
+      }
+      .chart-box {
+        flex: 1;
+        min-height: 0;
+        position: relative;
+      }
+      .row--zone-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        grid-template-rows: auto 550px;
+        gap: 0;
+        padding: 0;
+      }
+      .zone-grid-cell {
+        padding: 8px 10px 12px;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        height: 550px;
+        box-sizing: border-box;
+      }
+      .row--zone-grid .chart-box {
+        flex: 1;
+        min-height: 0;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+      }
+      .row--zone-grid #zone-canvas,
+      .row--zone-grid #heatmap-canvas,
+      .row--zone-grid .zone-grid-canvas {
+        display: block;
+        width: 100%;
+        flex: 1;
+        min-height: 0;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        background: #fff;
+      }
+      .upload-bar {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .upload-row-main {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: stretch;
+        gap: 12px;
+      }
+      .upload-row-main .upload-drop,
+      .upload-row-main .upload-side-cell {
+        flex: 1;
+        min-width: 180px;
+      }
+      .upload-side-cell {
+        border: 2px dashed #cbd5e1;
+        border-radius: 6px;
+        background: #f8fafc;
+        padding: 12px 14px;
+        box-sizing: border-box;
+        min-height: 52px;
+      }
+      .pitcher-filter-title {
+        font-size: 10px;
+        font-weight: 700;
+        color: #475569;
+        margin-bottom: 8px;
+      }
+      #lang-select {
+        width: 100%;
+        max-width: 100%;
+        padding: 7px 8px;
+        font-size: 12px;
+        font-weight: 600;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        background: #fff;
+        color: #0f172a;
+        cursor: pointer;
+      }
+      .pitcher-filter-radios {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+      }
+      .pitcher-filter-option {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #0f172a;
+        cursor: pointer;
+        user-select: none;
+      }
+      .pitcher-filter-option input {
+        margin: 0;
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+      .upload-export-col {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 6px;
+        min-width: 132px;
+      }
+      .upload-btn--export {
+        font-size: 13px;
+        font-weight: 800;
+        padding: 10px 14px;
+        border-radius: 8px;
+        border: 1px solid #0f172a;
+        background: #0f172a;
+        color: #fff;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .upload-btn--export:hover {
+        background: #1e293b;
+      }
+      .upload-btn--export:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+      .upload-export-hint {
+        font-size: 10px;
+        color: #64748b;
+        line-height: 1.25;
+        max-width: 160px;
+      }
+      .report-capture-area {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        min-width: 0;
+      }
+      .upload-cell-title {
+        font-size: 11px;
+        font-weight: 700;
+        color: #374151;
+      }
+      .upload-cell-hint {
+        font-size: 10px;
+        color: #64748b;
+        line-height: 1.3;
+      }
+      .upload-drop {
+        border: 2px dashed #cbd5e1;
+        border-radius: 6px;
+        background: #f8fafc;
+        padding: 12px 14px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        transition: border-color 0.15s, background 0.15s;
+      }
+      .upload-drop:hover,
+      .upload-drop:focus-within {
+        border-color: #94a3b8;
+        background: #f1f5f9;
+      }
+      .upload-drop.dragover {
+        border-color: #3b82f6;
+        background: #eff6ff;
+      }
+      .upload-drop input[type="file"] {
+        position: absolute;
+        width: 0;
+        height: 0;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .upload-btn {
+        font-size: 12px;
+        font-weight: 700;
+        padding: 6px 12px;
+        border-radius: 6px;
+        border: 1px solid #e2e8f0;
+        background: #fff;
+        color: #0f172a;
+        cursor: pointer;
+      }
+      .upload-btn:hover {
+        background: #f8fafc;
+      }
+      .upload-filename {
+        font-size: 11px;
+        color: #64748b;
+        word-break: break-all;
+        flex: 1;
+        min-width: 140px;
+      }
+      .upload-filename.has-file {
+        color: #0f172a;
+        font-weight: 600;
+      }
+      .upload-status {
+        font-size: 11px;
+        font-weight: 600;
+        color: #16a34a;
+        width: 100%;
+      }
+      .upload-status.err {
+        color: #dc2626;
+      }
+      .empty-hint {
+        font-size: 11px;
+        color: #94a3b8;
+        text-align: center;
+        padding: 20px 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="report" id="report-root">
+      <!-- 최상단: CSV -->
+      <section class="row row--csv" aria-label="" id="section-csv">
+        <div class="upload-bar">
+          <div class="upload-cell-title" id="i18n-csv-title">CSV</div>
+          <div class="upload-cell-hint" id="upload-cell-hint"></div>
+          <div class="upload-row-main">
+            <div
+              class="upload-drop"
+              id="upload-drop-csv"
+              tabindex="0"
+              role="button"
+            >
+              <input
+                id="file-csv"
+                type="file"
+                webkitdirectory=""
+                directory=""
+                multiple
+              />
+              <button type="button" class="upload-btn" id="btn-csv">폴더 선택</button>
+              <input
+                id="file-index-csv"
+                type="file"
+                accept=".csv,text/csv"
+                aria-label="Index.csv 단독 선택"
+                style="position:absolute;width:0;height:0;opacity:0;pointer-events:none"
+              />
+              <button type="button" class="upload-btn" id="btn-index-csv" title="폴더에 Index.csv가 없을 때">
+                Index.csv
+              </button>
+              <div class="upload-filename" id="name-csv">선택된 폴더 없음</div>
+              <div class="upload-status" id="status-csv" aria-live="polite"></div>
+            </div>
+            <div class="upload-side-cell" id="upload-lang-cell" aria-label="">
+              <div class="pitcher-filter-title" id="lang-cell-title">언어</div>
+              <select id="lang-select" aria-label="">
+                <option value="ko" selected>한국어</option>
+                <option value="en">English</option>
+                <option value="ja">日本語</option>
+              </select>
+            </div>
+            <div class="upload-side-cell" id="upload-side-cell" aria-label="">
+              <div class="pitcher-filter-title" id="pitcher-filter-heading">투수</div>
+              <div class="pitcher-filter-radios" role="radiogroup" aria-label="" id="pitcher-filter-radiogroup">
+                <label class="pitcher-filter-option">
+                  <input
+                    type="radio"
+                    name="pitcher-hand-filter"
+                    value="all"
+                    checked=""
+                  />
+                  <span id="pitcher-opt-all">모든투수</span>
+                </label>
+                <label class="pitcher-filter-option">
+                  <input type="radio" name="pitcher-hand-filter" value="L" />
+                  <span id="pitcher-opt-l">좌투수</span>
+                </label>
+                <label class="pitcher-filter-option">
+                  <input type="radio" name="pitcher-hand-filter" value="R" />
+                  <span id="pitcher-opt-r">우투수</span>
+                </label>
+              </div>
+            </div>
+            <div class="upload-export-col">
+              <button
+                type="button"
+                class="upload-btn--export"
+                id="btn-export-report-png"
+                aria-label="리포트 영역을 PNG로 저장"
+              >
+                이미지 추출
+              </button>
+              <div class="upload-export-hint">CSV·이 버튼 제외, 아래 히트 스프레이만 PNG</div>
+            </div>
+          </div>
+          <div class="batter-select-row" id="batter-select-row" hidden>
+            <label for="batter-select">타자 (bName)</label>
+            <select id="batter-select" aria-label="타자 선택"></select>
+          </div>
+        </div>
+      </section>
+
+      <div id="report-capture-area" class="report-capture-area">
+      <div class="spray-meta-row" style="padding:10px 16px;font-size:1.1rem;font-weight:700;color:#0f172a;border-bottom:1px solid #e2e8f0;background:#f8fafc;">
+        <span id="batter-display-name">—</span><span class="batter-hand" id="batter-hand" style="font-size:1rem;margin-left:8px;"></span>
+      </div>
+      <!-- 스프레이 필드만 -->
+      <section class="row row--spray" aria-label="스프레이 차트">
+        <div class="spray-split-cell spray-split-cell--a spray-split-cell--full">
+          <div class="spray-split-label" id="spray-split-label-main">Spray Chart</div>
+          <div class="row-title"></div>
+          <div class="spray-wrap">
+            <canvas id="spray-field-canvas" width="1200" height="680"></canvas>
+          </div>
+        </div>
+      </section>
+
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        /** @type {{ header: string[], fullRows: string[][], indices: Object, batters: { name: string, bZone: string }[] } | null} */
+        var reportCache = null;
+        var PFP_BASE_URL =
+          "https://zocgzinzbbqwaclecjgk.supabase.co/storage/v1/object/public/pfp/";
+        var PFP_DEFAULT_URL = PFP_BASE_URL + "146.png";
+        /** null: Index.csv 없음(기본 이미지). 객체: 매핑(파일 있음, 빈 객체 가능) */
+        var pfpNameToIndexMap = null;
+
+        var UI_LANG_STORAGE = "hitspray-ui-lang";
+        var uiLang = "ko";
+        try {
+          var _ls = localStorage.getItem(UI_LANG_STORAGE);
+          if (_ls === "en" || _ls === "ja" || _ls === "ko") uiLang = _ls;
+        } catch (e0) {}
+
+        var I18N = {
+          ko: {
+            docTitle: "히트 스프레이",
+            csvTitle: "CSV",
+            csvHint:
+              "폴더를 지정하면 그 안의 CSV·TXT(확장자 없음 포함)만 읽어 한 데이터로 합칩니다. JSON·이미지 등은 제외됩니다. 열 이름(norm)이 같으면 한 행으로 맞춰 병합합니다. 같은 폴더에 Index.csv(Name·Index 열)가 있으면 타자(bName)와 매칭해 프로필 사진을 불러옵니다. 없으면 Index.csv 버튼으로 따로 지정할 수 있습니다. 컬럼 예: bName, bZone, pHand, call, zoneX, zoneY …",
+            ariaPickFolder: "CSV 폴더 선택",
+            btnFolder: "폴더 선택",
+            ariaIndexCsv: "Index.csv 단독 선택",
+            indexCsvTooltip: "폴더에 Index.csv가 없을 때",
+            nameCsvNone: "선택된 폴더 없음",
+            ariaLangCell: "언어",
+            langTitle: "언어",
+            ariaLangSelect: "표시 언어",
+            ariaPitcherCell: "투수 필터",
+            pitcherTitle: "투수",
+            ariaPitcherGroup: "투수 손 (하나만 선택)",
+            pitcherAll: "모든투수",
+            pitcherL: "좌투수",
+            pitcherR: "우투수",
+            ariaExport: "리포트 영역을 PNG로 저장",
+            btnExport: "이미지 추출",
+            exportHint: "CSV·이 버튼 제외, 아래 리포트만 PNG",
+            batterLabel: "타자 (bName)",
+            ariaBatterSelect: "타자 선택",
+            profileAlt: "타자 프로필",
+            battingReportHeading: "Batting Report",
+            statsHeading: "열 설명",
+            sprayMain: "스프레이 차트",
+            batCenter: "배트 센터",
+            titlePitchZone: "Pitch Zone",
+            titleHotCold: "Hot & Cold Zone",
+            abcA: "패스트볼",
+            abcB: "스플리터",
+            abcC: "슬라이더 (라이징슬라이더 포함)",
+            abcD: "커브",
+            abcE: "싱커 (라이징싱커 포함)",
+            abcF: "스크류볼",
+            zoneA: "패스트볼 (A)",
+            zoneB: "스플리터 (B)",
+            zoneC: "슬라이더 (라이징슬라이더 포함) (C)",
+            zoneD: "커브 (D)",
+            zoneE: "싱커 (라이징싱커 포함) (E)",
+            zoneF: "스크류볼 (F)",
+            field3b: "3루",
+            fieldCf: "중앙",
+            field1b: "1루",
+            roseLdeg: "상하 ldeg ±60° · 5°",
+            roseSdeg: "좌우 sDeg ±60° · 5°",
+            batcenNoCols: "batCen / hPos 열 없음",
+            batcenNoData: "데이터 없음",
+            pitchUnlabeled: "(미표기)",
+            secCsv: "CSV 가져오기",
+            secName: "타자 헤더",
+            secStats: "스텟",
+            secLegend: "스텟 표 열 설명",
+            secSpray: "스프레이 차트",
+            secLdeg: "타구 상하각 구종별",
+            secSdeg: "타구 좌우각 구종별",
+            secZonePitch: "구종군별 타격 존",
+            secZoneAv: "구종군별 타율 존",
+            stNoCapture: "캡처 영역을 찾을 수 없습니다.",
+            stNoH2c: "이미지 추출: html2canvas를 불러오지 못했습니다. 네트워크를 확인하세요.",
+            stPngGen: "PNG 생성 중…",
+            stPngFail: "PNG 생성에 실패했습니다.",
+            stSaved: "저장:",
+            stExportFail: "이미지 추출 실패",
+            stExportHintFile:
+              " — HTML을 file://로 열면 로컬 PNG가 캔버스 보안에 걸립니다. localhost에서 열거나 엠블럼을 HTTPS URL로 두세요.",
+            stNoCsvFiles: "CSV·TXT로 읽을 파일이 없습니다.",
+            stDataCsvOnly:
+              "투구 데이터 CSV가 없습니다. Index.csv만 있으면 병합할 수 없습니다.",
+            nameNeedData: "데이터 CSV 필요",
+            stMergeFiles: "개 파일 병합",
+            stMerge: "병합",
+            stAndRows: "개 파일 · 데이터",
+            stRows: "행",
+            stSkip: " · 제외",
+            stSkipEmpty: "개(빈 파일 등:",
+            stProfIdx: " · 프로필 Index",
+            stCountSuffix: "건",
+            stDone: " · 처리 완료",
+            stReadFail: "파일을 읽지 못했습니다.",
+            stIdxApply: "Index.csv · 프로필 매핑 ",
+            stIdxApplyTail: "건 적용",
+            stIdxWaitData: "건 (데이터 폴더를 불러오면 타자별로 적용)",
+            stIdxReadFail: "Index.csv를 읽지 못했습니다.",
+            stBatterDone: "타자 변경 · 행 처리 완료",
+            stPitchFilterDone: "투수 필터 적용 · 행 처리 완료",
+            mergeLine: "병합 {mf}/{tf}개 파일 · 데이터 {row}행",
+            mergeSkip: " · 제외 {n}개(빈 파일 등: {sn})",
+            mergeSkipMore: " 외 {more}개",
+            mergeProf: " · 프로필 Index {n}건",
+            nameMergeSuffix: "개 파일 병합",
+            errEmptyFile: "빈 파일입니다.",
+            missLaunch: "ldeg / 발사각(상하각) 열",
+            missSpray: "sDeg / 좌우각 열",
+            missZone: "zoneX/zoneY 열",
+            missSprayField: "스프레이 필드: lx·lz 또는 cx·cz",
+            missCallRose: "call 없음 → 상·좌 로즈·스프레이 필드에 필터 미적용",
+            warnPrefix: "선택 열 없음: ",
+            warnSuffix: " → 해당 그래프는 비거나 제한됩니다.",
+            warnHand: "투수 필터: pHand 열 없음 → 좌/우 선택 미적용",
+            statsTh: [
+              "구종",
+              "투구수",
+              "스트라이크 비율",
+              "들어온 공",
+              "들어온 공 스윙",
+              "나간 공 스윙",
+              "스윙 중 헛스윙",
+              "전체 헛스윙",
+              "스트라이크+헛스윙",
+              "결정구",
+              "AVG",
+              "Barrel%",
+              "HardHit%",
+            ],
+            legend: [
+              { dt: "count", dd: "해당 구종(패밀리)의 총 투구 수" },
+              { dt: "Strike%", dd: "전체 투구 중 스트라이크로 기록된 비율" },
+              { dt: "Zone%", dd: "스트라이크존 안으로 들어온 공의 비율" },
+              { dt: "Z-Swing%", dd: "존 안 공에 스윙한 비율" },
+              { dt: "O-Swing%", dd: "존 밖 공에 스윙한 비율" },
+              { dt: "Whiff%", dd: "스윙 중 헛스윙 비율" },
+              { dt: "SwStr%", dd: "전체 투구 대비 헛스윙 비율" },
+              { dt: "CSW%", dd: "콜스트라이크 + 헛스윙 비율" },
+              { dt: "PutAway%", dd: "2스트라이크 이후 삼진으로 끝난 비율" },
+              { dt: "AVG", dd: "타수 대비 안타 비율 (타율)" },
+              { dt: "Barrel%", dd: "이상적인 타구(속도+각도)의 비율" },
+              { dt: "HardHit%", dd: "강한 타구(높은 타구속도) 비율" },
+            ],
+          },
+          en: {
+            docTitle: "Hit spray",
+            csvTitle: "CSV",
+            csvHint:
+              "Load a folder: only .csv / .txt (including extension-less) are merged. Columns align by header name (norm). If Index.csv (Name, Index) is in the same folder, profile images match bName. Otherwise use the Index.csv button. Example columns: bName, bZone, pHand, call, zoneX, zoneY …",
+            ariaPickFolder: "Choose CSV folder",
+            btnFolder: "Choose folder",
+            ariaIndexCsv: "Pick Index.csv only",
+            indexCsvTooltip: "When Index.csv is not in the folder",
+            nameCsvNone: "No folder selected",
+            ariaLangCell: "Language",
+            langTitle: "Language",
+            ariaLangSelect: "Display language",
+            ariaPitcherCell: "Pitcher filter",
+            pitcherTitle: "Pitcher",
+            ariaPitcherGroup: "Pitcher hand (pick one)",
+            pitcherAll: "All",
+            pitcherL: "LHP",
+            pitcherR: "RHP",
+            ariaExport: "Save report area as PNG",
+            btnExport: "Export PNG",
+            exportHint: "CSV & this button excluded; PNG is report area only",
+            batterLabel: "Batter (bName)",
+            ariaBatterSelect: "Select batter",
+            profileAlt: "Batter profile",
+            battingReportHeading: "Batting Report",
+            statsHeading: "Column guide",
+            sprayMain: "Spray chart",
+            batCenter: "Bat center",
+            titlePitchZone: "Pitch zone",
+            titleHotCold: "Hot & cold zone",
+            abcA: "Fastball",
+            abcB: "Splitter",
+            abcC: "Slider (incl. Rising slider)",
+            abcD: "Curve",
+            abcE: "Sinker (incl. Rising sinker)",
+            abcF: "Screwball",
+            zoneA: "Fastball (A)",
+            zoneB: "Splitter (B)",
+            zoneC: "Slider (incl. Rising slider) (C)",
+            zoneD: "Curve (D)",
+            zoneE: "Sinker (incl. Rising sinker) (E)",
+            zoneF: "Screwball (F)",
+            field3b: "3B",
+            fieldCf: "CF",
+            field1b: "1B",
+            roseLdeg: "Vert. ldeg ±60° · 5° bins",
+            roseSdeg: "Horz. sDeg ±60° · 5° bins",
+            batcenNoCols: "No batCen / hPos column",
+            batcenNoData: "No data",
+            pitchUnlabeled: "(unlabeled)",
+            secCsv: "Import CSV",
+            secName: "Batter header",
+            secStats: "Stats",
+            secLegend: "Stat columns",
+            secSpray: "Spray chart",
+            secLdeg: "Launch angle by pitch group",
+            secSdeg: "Spray angle by pitch group",
+            secZonePitch: "Zones by pitch group",
+            secZoneAv: "AVG heatmap by pitch group",
+            stNoCapture: "Capture area not found.",
+            stNoH2c: "Export: could not load html2canvas (network).",
+            stPngGen: "Building PNG…",
+            stPngFail: "PNG export failed.",
+            stSaved: "Saved:",
+            stExportFail: "Export failed",
+            stExportHintFile:
+              " — Local file:// images taint the canvas. Use http://localhost or host the emblem on HTTPS.",
+            stNoCsvFiles: "No CSV/TXT files to read.",
+            stDataCsvOnly:
+              "No pitch data CSV. Cannot merge with Index.csv alone.",
+            nameNeedData: "Pitch data CSV required",
+            stMergeFiles: " files merged",
+            stMerge: "Merged",
+            stAndRows: "/ files · data",
+            stRows: " rows",
+            stSkip: " · skipped",
+            stSkipEmpty: "(empty etc:",
+            stProfIdx: " · profile Index",
+            stCountSuffix: " rows",
+            stDone: " · done",
+            stReadFail: "Could not read files.",
+            stIdxApply: "Index.csv · profile map ",
+            stIdxApplyTail: " rows applied",
+            stIdxWaitData: " rows (load data folder for per-batter)",
+            stIdxReadFail: "Could not read Index.csv.",
+            stBatterDone: "Batter changed · done",
+            stPitchFilterDone: "Pitcher filter · done",
+            mergeLine: "Merged {mf}/{tf} files · data {row} rows",
+            mergeSkip: " · skipped {n} (empty etc.: {sn})",
+            mergeSkipMore: " + {more} more",
+            mergeProf: " · profile Index {n}",
+            nameMergeSuffix: " files merged",
+            errEmptyFile: "Empty file.",
+            missLaunch: "ldeg / launch angle column",
+            missSpray: "sDeg / spray angle column",
+            missZone: "zoneX / zoneY column",
+            missSprayField: "Spray: need lx·lz or cx·cz",
+            missCallRose: "No call column → rose/spray filters off",
+            warnPrefix: "Missing columns: ",
+            warnSuffix: " → some charts empty.",
+            warnHand: "No pHand column → hand filter inactive",
+            statsTh: [
+              "Pitch",
+              "Count",
+              "Strike%",
+              "Zone%",
+              "Z-Swing%",
+              "O-Swing%",
+              "Whiff%",
+              "SwStr%",
+              "CSW%",
+              "PutAway%",
+              "AVG",
+              "Barrel%",
+              "HardHit%",
+            ],
+            legend: [
+              { dt: "count", dd: "Total pitches for this pitch family." },
+              { dt: "Strike%", dd: "Share of pitches recorded as strikes." },
+              { dt: "Zone%", dd: "Share of pitches in the strike zone." },
+              { dt: "Z-Swing%", dd: "Swing rate on pitches in the zone." },
+              { dt: "O-Swing%", dd: "Swing rate on pitches out of the zone." },
+              { dt: "Whiff%", dd: "Whiff rate among swings." },
+              { dt: "SwStr%", dd: "Whiffs per all pitches." },
+              { dt: "CSW%", dd: "Called strikes + whiffs per pitch." },
+              { dt: "PutAway%", dd: "Share of Ks after two strikes." },
+              { dt: "AVG", dd: "Batting average on BIP context." },
+              { dt: "Barrel%", dd: "Barrel-quality BIP rate." },
+              { dt: "HardHit%", dd: "Hard-hit ball rate." },
+            ],
+          },
+          ja: {
+            docTitle: "ヒットスプレー",
+            csvTitle: "CSV",
+            csvHint:
+              "フォルダを指定すると中のCSV・TXTのみを1本にマージします。Index.csv（Name・Index列）が同じフォルダにあればbNameとプロフィール画像を対応づめます。無いときはIndex.csvボタンで指定。列例: bName, bZone, pHand, call, zoneX, zoneY …",
+            ariaPickFolder: "CSVフォルダを選択",
+            btnFolder: "フォルダ選択",
+            ariaIndexCsv: "Index.csvのみ選択",
+            indexCsvTooltip: "フォルダにIndex.csvが無いとき",
+            nameCsvNone: "フォルダ未選択",
+            ariaLangCell: "言語",
+            langTitle: "言語",
+            ariaLangSelect: "表示言語",
+            ariaPitcherCell: "投手フィルター",
+            pitcherTitle: "投手",
+            ariaPitcherGroup: "投手の利き腕（1つ）",
+            pitcherAll: "全投手",
+            pitcherL: "左投手",
+            pitcherR: "右投手",
+            ariaExport: "レポート領域をPNG保存",
+            btnExport: "画像出力",
+            exportHint: "CSVとこのボタン以外をPNGにします",
+            batterLabel: "打者 (bName)",
+            ariaBatterSelect: "打者選択",
+            profileAlt: "打者プロフィール",
+            battingReportHeading: "Batting Report",
+            statsHeading: "列の説明",
+            sprayMain: "スプレー・チャート",
+            batCenter: "バットセンター",
+            titlePitchZone: "ピッチゾーン",
+            titleHotCold: "ホット＆冷ゾーン",
+            abcA: "速球",
+            abcB: "スプリット",
+            abcC: "スライダー（ライズスライダー含む）",
+            abcD: "カーブ",
+            abcE: "シンカー（ライズシンカー含む）",
+            abcF: "スクリューボール",
+            zoneA: "速球 (A)",
+            zoneB: "スプリット (B)",
+            zoneC: "スライダー（ライズスライダー含む） (C)",
+            zoneD: "カーブ (D)",
+            zoneE: "シンカー（ライズシンカー含む） (E)",
+            zoneF: "スクリューボール (F)",
+            field3b: "三塁",
+            fieldCf: "中堅",
+            field1b: "一塁",
+            roseLdeg: "上下角 ldeg ±60° · 5°",
+            roseSdeg: "左右角 sDeg ±60° · 5°",
+            batcenNoCols: "batCen / hPos 列なし",
+            batcenNoData: "データなし",
+            pitchUnlabeled: "(未記載)",
+            secCsv: "CSV読込",
+            secName: "打者ヘッダ",
+            secStats: "スタッツ",
+            secLegend: "スタッツ列説明",
+            secSpray: "スプレーチャート",
+            secLdeg: "飛球上下角（球種別）",
+            secSdeg: "飛球左右角（球種別）",
+            secZonePitch: "球種グループ別ゾーン",
+            secZoneAv: "球種グループ別打率ヒート",
+            stNoCapture: "キャプチャ領域がありません。",
+            stNoH2c: "html2canvasを読み込めません。ネットワークを確認してください。",
+            stPngGen: "PNG生成中…",
+            stPngFail: "PNG生成に失敗しました。",
+            stSaved: "保存:",
+            stExportFail: "画像出力失敗",
+            stExportHintFile:
+              " — file://ではローカルPNGがセキュリティでブロックされます。localhostかHTTPSの画像を使ってください。",
+            stNoCsvFiles: "読むCSV/TXTがありません。",
+            stDataCsvOnly:
+              "投球データCSVがありません。Index.csvだけではマージできません。",
+            nameNeedData: "投球CSVが必要",
+            stMergeFiles: "ファイルをマージ",
+            stMerge: "マージ",
+            stAndRows: "/ファイル · データ",
+            stRows: "行",
+            stSkip: " · 除外",
+            stSkipEmpty: "件(空など:",
+            stProfIdx: " · プロフィールIndex",
+            stCountSuffix: "件",
+            stDone: " · 完了",
+            stReadFail: "ファイルを読めませんでした。",
+            stIdxApply: "Index.csv · プロフィール ",
+            stIdxApplyTail: "件を反映",
+            stIdxWaitData: "件（データフォルダ後に打者別）",
+            stIdxReadFail: "Index.csvを読めませんでした。",
+            stBatterDone: "打者変更 · 完了",
+            stPitchFilterDone: "投手フィルター適用 · 完了",
+            mergeLine: "マージ {mf}/{tf} ファイル · データ {row} 行",
+            mergeSkip: " · 除外 {n} 件(空など: {sn})",
+            mergeSkipMore: " 他{more}件",
+            mergeProf: " · プロフィールIndex {n}件",
+            nameMergeSuffix: " ファイルマージ",
+            errEmptyFile: "空のファイルです。",
+            missLaunch: "ldeg / 打ち上げ角 列",
+            missSpray: "sDeg / スプレー角 列",
+            missZone: "zoneX / zoneY 列",
+            missSprayField: "スプレー: lx·lz または cx·cz",
+            missCallRose: "call列なし → ローズ等フィルター未適用",
+            warnPrefix: "列なし: ",
+            warnSuffix: " → 一部グラフは空です。",
+            warnHand: "pHand列なし → 左右フィルター無効",
+            statsTh: [
+              "球種",
+              "球数",
+              "Strike%",
+              "Zone%",
+              "Z-Swing%",
+              "O-Swing%",
+              "Whiff%",
+              "SwStr%",
+              "CSW%",
+              "PutAway%",
+              "AVG",
+              "Barrel%",
+              "HardHit%",
+            ],
+            legend: [
+              { dt: "count", dd: "当該球種グループの総投球数" },
+              { dt: "Strike%", dd: "全投球に対するストライクの割合" },
+              { dt: "Zone%", dd: "ゾーン内に入った球の割合" },
+              { dt: "Z-Swing%", dd: "ゾーン内の球へのスイング率" },
+              { dt: "O-Swing%", dd: "ゾーン外の球へのスイング率" },
+              { dt: "Whiff%", dd: "スイングに対する空振りの割合" },
+              { dt: "SwStr%", dd: "全投球に対する空振りの割合" },
+              { dt: "CSW%", dd: "見逃しスト＋空振りの割合" },
+              { dt: "PutAway%", dd: "2ストライク後に三振で終わった割合" },
+              { dt: "AVG", dd: "打数対応の打率" },
+              { dt: "Barrel%", dd: "理想打球の割合" },
+              { dt: "HardHit%", dd: "強打球の割合" },
+            ],
+          },
+        };
+
+        function t(key) {
+          var pack = I18N[uiLang];
+          if (!pack) pack = I18N.ko;
+          var v = pack[key];
+          if (v !== undefined && v !== null) return v;
+          var fb = I18N.ko[key];
+          return fb !== undefined && fb !== null ? fb : key;
+        }
+
+        function tpl(str, o) {
+          var r = String(str || "");
+          if (!o) return r;
+          for (var k in o) {
+            if (!Object.prototype.hasOwnProperty.call(o, k)) continue;
+            r = r.split("{" + k + "}").join(String(o[k]));
+          }
+          return r;
+        }
+
+        function getAbcPitchFamilyNames() {
+          return [t("abcA"), t("abcB"), t("abcC"), t("abcD"), t("abcE"), t("abcF")];
+        }
+
+        function applyUiLanguage() {
+          document.documentElement.lang =
+            uiLang === "ja" ? "ja" : uiLang === "en" ? "en" : "ko";
+          document.title = t("docTitle");
+          var el;
+          el = document.getElementById("i18n-csv-title");
+          if (el) el.textContent = t("csvTitle");
+          el = document.getElementById("upload-cell-hint");
+          if (el) el.textContent = t("csvHint");
+          el = document.getElementById("upload-drop-csv");
+          if (el) el.setAttribute("aria-label", t("ariaPickFolder"));
+          el = document.getElementById("btn-csv");
+          if (el) el.textContent = t("btnFolder");
+          el = document.getElementById("file-index-csv");
+          if (el) el.setAttribute("aria-label", t("ariaIndexCsv"));
+          el = document.getElementById("btn-index-csv");
+          if (el) {
+            el.textContent = "Index.csv";
+            el.setAttribute("title", t("indexCsvTooltip"));
+          }
+          el = document.getElementById("upload-lang-cell");
+          if (el) el.setAttribute("aria-label", t("ariaLangCell"));
+          el = document.getElementById("lang-cell-title");
+          if (el) el.textContent = t("langTitle");
+          el = document.getElementById("lang-select");
+          if (el) {
+            el.value = uiLang;
+            el.setAttribute("aria-label", t("ariaLangSelect"));
+          }
+          el = document.getElementById("upload-side-cell");
+          if (el) el.setAttribute("aria-label", t("ariaPitcherCell"));
+          el = document.getElementById("pitcher-filter-heading");
+          if (el) el.textContent = t("pitcherTitle");
+          el = document.getElementById("pitcher-filter-radiogroup");
+          if (el) el.setAttribute("aria-label", t("ariaPitcherGroup"));
+          el = document.getElementById("pitcher-opt-all");
+          if (el) el.textContent = t("pitcherAll");
+          el = document.getElementById("pitcher-opt-l");
+          if (el) el.textContent = t("pitcherL");
+          el = document.getElementById("pitcher-opt-r");
+          if (el) el.textContent = t("pitcherR");
+          el = document.getElementById("btn-export-report-png");
+          if (el) el.setAttribute("aria-label", t("ariaExport"));
+          el = document.querySelector(".upload-btn--export");
+          if (el) el.textContent = t("btnExport");
+          el = document.querySelector(".upload-export-hint");
+          if (el) el.textContent = t("exportHint");
+          var lbl = document.querySelector('label[for="batter-select"]');
+          if (lbl) lbl.textContent = t("batterLabel");
+          el = document.getElementById("batter-select");
+          if (el) el.setAttribute("aria-label", t("ariaBatterSelect"));
+          el = document.getElementById("batter-header-photo");
+          if (el) el.setAttribute("alt", t("profileAlt"));
+          el = document.getElementById("i18n-batting-report-heading");
+          if (el) el.textContent = t("battingReportHeading");
+          el = document.getElementById("spray-split-label-main");
+          if (el) el.textContent = t("sprayMain");
+          el = document.getElementById("i18n-title-pitch-zone");
+          if (el) el.textContent = t("titlePitchZone");
+          el = document.getElementById("i18n-title-hot-cold");
+          if (el) el.textContent = t("titleHotCold");
+
+          el = document.getElementById("section-csv");
+          if (el) el.setAttribute("aria-label", t("secCsv"));
+          el = document.getElementById("section-name");
+          if (el) el.setAttribute("aria-label", t("secName"));
+          el = document.getElementById("section-stats");
+          if (el) el.setAttribute("aria-label", t("secStats"));
+          el = document.getElementById("stats-legend-section");
+          if (el) el.setAttribute("aria-label", t("secLegend"));
+          el = document.getElementById("stats-legend-heading");
+          if (el) el.textContent = t("statsHeading");
+          el = document.querySelector(".row--spray");
+          if (el) el.setAttribute("aria-label", t("secSpray"));
+          el = document.getElementById("section-zone-pitch");
+          if (el) el.setAttribute("aria-label", t("secZonePitch"));
+          el = document.getElementById("section-zone-av");
+          if (el) el.setAttribute("aria-label", t("secZoneAv"));
+
+          var heads = I18N[uiLang].statsTh || I18N.ko.statsTh;
+          var ths = document.querySelectorAll(".batter-stats-table thead th");
+          for (var hi = 0; hi < ths.length && hi < heads.length; hi++) {
+            ths[hi].textContent = heads[hi];
+          }
+          var leg = I18N[uiLang].legend || I18N.ko.legend;
+          var items = document.querySelectorAll(".stats-legend-item");
+          for (var lj = 0; lj < items.length && lj < leg.length; lj++) {
+            var ddt = items[lj].querySelector("dt");
+            var ddd = items[lj].querySelector("dd");
+            if (ddt) ddt.textContent = leg[lj].dt;
+            if (ddd) ddd.textContent = leg[lj].dd;
+          }
+          var zt = [
+            t("zoneA"),
+            t("zoneB"),
+            t("zoneC"),
+            t("zoneD"),
+            t("zoneE"),
+            t("zoneF"),
+          ];
+          var ztitles = document.querySelectorAll(".zone-grid-title");
+          for (var zi = 0; zi < ztitles.length; zi++) {
+            ztitles[zi].textContent = zt[zi % 6];
+          }
+          var nameCsvEl = document.getElementById("name-csv");
+          if (nameCsvEl && !nameCsvEl.classList.contains("has-file")) {
+            nameCsvEl.textContent = t("nameCsvNone");
+          }
+          var statRows = document.querySelectorAll(
+            "#batter-stats-tbody th[scope='row'][data-pitch-canon]"
+          );
+          for (var si = 0; si < statRows.length; si++) {
+            var can = statRows[si].getAttribute("data-pitch-canon");
+            if (can != null)
+              statRows[si].textContent = pitchFamilyDisplayName(can);
+          }
+        }
+
+        function bZoneToHand(zone) {
+          var z = String(zone || "").trim().toUpperCase();
+          if (z.indexOf("L") === 0) return "LHB";
+          if (z.indexOf("R") === 0) return "RHB";
+          return "";
+        }
+
+        /** pHand 열: 값이 정확히 L 또는 R(대소문자 무시)일 때만 좌·우투로 인식 */
+        function pitcherHandFromCell(v) {
+          var u = String(v != null ? v : "")
+            .trim()
+            .toUpperCase();
+          if (u === "L") return "L";
+          if (u === "R") return "R";
+          return "";
+        }
+
+        function rowPassesPitcherHandFilter(row, idxPHand, filterMode) {
+          if (filterMode === "all" || idxPHand < 0) return true;
+          var h = pitcherHandFromCell(row[idxPHand]);
+          if (!h) return false;
+          return h === filterMode;
+        }
+
+        /** 투수 필터 라디오 → 헤더용 접미사 (언어와 무관하게 LHP/RHP/AHP 영문 고정) */
+        function pitcherFilterVsLabel() {
+          var el = document.querySelector(
+            'input[name="pitcher-hand-filter"]:checked'
+          );
+          var v = el ? String(el.value) : "all";
+          if (v === "L") return " vs LHP";
+          if (v === "R") return " vs RHP";
+          return " vs AHP";
+        }
+
+        function extractBattersList(rows, idxBName, idxBZone) {
+          if (idxBName < 0) return [];
+          var map = new Map();
+          for (var i = 0; i < rows.length; i++) {
+            var nm = String(rows[i][idxBName] != null ? rows[i][idxBName] : "").trim();
+            if (!nm) continue;
+            if (map.has(nm)) continue;
+            var zraw =
+              idxBZone >= 0
+                ? String(rows[i][idxBZone] != null ? rows[i][idxBZone] : "").trim()
+                : "";
+            var zup = zraw.toUpperCase();
+            var zone = zup.indexOf("L") === 0 ? "L" : zup.indexOf("R") === 0 ? "R" : "";
+            map.set(nm, zone);
+          }
+          return Array.from(map.keys())
+            .sort(function (a, b) {
+              return a.localeCompare(b, "ko");
+            })
+            .map(function (name) {
+              return { name: name, bZone: map.get(name) };
+            });
+        }
+
+        function populateBatterSelectUI(batters) {
+          var sel = document.getElementById("batter-select");
+          var wrap = document.getElementById("batter-select-row");
+          if (!sel || !wrap) return;
+          sel.innerHTML = "";
+          if (!batters.length) {
+            wrap.hidden = true;
+            return;
+          }
+          wrap.hidden = false;
+          for (var i = 0; i < batters.length; i++) {
+            var o = document.createElement("option");
+            o.value = batters[i].name;
+            o.textContent = batters[i].name;
+            sel.appendChild(o);
+          }
+          sel.value = batters[0].name;
+        }
+
+        function parseCsvLine(line) {
+          var out = [];
+          var field = "";
+          var i = 0;
+          var inQ = false;
+          while (i < line.length) {
+            var c = line.charAt(i);
+            if (inQ) {
+              if (c === '"') {
+                if (line.charAt(i + 1) === '"') {
+                  field += '"';
+                  i += 2;
+                  continue;
+                }
+                inQ = false;
+                i++;
+                continue;
+              }
+              field += c;
+              i++;
+            } else {
+              if (c === '"') {
+                inQ = true;
+                i++;
+              } else if (c === ",") {
+                out.push(field);
+                field = "";
+                i++;
+              } else {
+                field += c;
+                i++;
+              }
+            }
+          }
+          out.push(field);
+          return out;
+        }
+
+        function stripBom(s) {
+          s = String(s || "");
+          if (s.charCodeAt(0) === 0xfeff) return s.slice(1);
+          return s;
+        }
+
+        /** 폴더에서 병합할 파일: .csv / .txt (확장자 없음도 포함) */
+        function filterCsvMergeFiles(fileList) {
+          var out = [];
+          var nFiles = fileList ? fileList.length : 0;
+          for (var i = 0; i < nFiles; i++) {
+            var f = fileList[i];
+            var n = (f.name || "").toLowerCase();
+            if (/\.(csv|txt)$/i.test(n) || n.indexOf(".") === -1) {
+              out.push(f);
+            }
+          }
+          out.sort(function (a, b) {
+            return String(a.name || "").localeCompare(String(b.name || ""), "ko");
+          });
+          return out;
+        }
+
+        function readFileAsTextUtf8(file) {
+          return new Promise(function (resolve, reject) {
+            var reader = new FileReader();
+            reader.onload = function () {
+              resolve(String(reader.result || ""));
+            };
+            reader.onerror = function () {
+              reject(new Error("read"));
+            };
+            reader.readAsText(file, "UTF-8");
+          });
+        }
+
+        function normHeader(h) {
+          return String(h || "")
+            .trim()
+            .toLowerCase()
+            .replace(/\s+/g, "");
+        }
+
+        function formatCsvField(f) {
+          var s = String(f != null ? f : "");
+          if (/[",\r\n]/.test(s)) {
+            return '"' + s.replace(/"/g, '""') + '"';
+          }
+          return s;
+        }
+
+        function formatCsvLine(fields) {
+          var parts = [];
+          for (var i = 0; i < fields.length; i++) {
+            parts.push(formatCsvField(fields[i]));
+          }
+          return parts.join(",");
+        }
+
+        /**
+         * 파일마다 다른 열 순서·추가 열이 있어도, normHeader 기준으로 합집합 열 순서를 만든다.
+         * @param {string[][]} partsHeaders
+         */
+        function buildCanonicalHeaderFromHeaders(partsHeaders) {
+          var seen = Object.create(null);
+          var out = [];
+          for (var p = 0; p < partsHeaders.length; p++) {
+            var hdr = partsHeaders[p];
+            if (!hdr || !hdr.length) continue;
+            for (var i = 0; i < hdr.length; i++) {
+              var nk = normHeader(hdr[i]);
+              if (!nk) continue;
+              if (seen[nk]) continue;
+              seen[nk] = true;
+              out.push(hdr[i]);
+            }
+          }
+          return out;
+        }
+
+        function headerNormToIndexMap(header) {
+          var m = Object.create(null);
+          for (var i = 0; i < header.length; i++) {
+            var nk = normHeader(header[i]);
+            if (nk && m[nk] === undefined) m[nk] = i;
+          }
+          return m;
+        }
+
+        function mapRowToCanonical(fileRow, fileHeaderNormMap, canonicalHeader) {
+          var out = [];
+          for (var c = 0; c < canonicalHeader.length; c++) {
+            var nk = normHeader(canonicalHeader[c]);
+            var j = fileHeaderNormMap[nk];
+            out.push(
+              j !== undefined && j < fileRow.length ? fileRow[j] : ""
+            );
+          }
+          return out;
+        }
+
+        /**
+         * 여러 CSV를 열 이름 기준으로 합침(순서·개수 불일치 허용). 합집합 헤더로 재정렬·패딩.
+         * @returns {{ text: string, mergeInfo: { mergedFiles: number, totalFiles: number, skippedFiles: {name:string,reason:string}[], totalDataRows: number } }}
+         */
+        function mergeFolderCsvTexts(parts) {
+          var emptyInfo = {
+            mergedFiles: 0,
+            totalFiles: 0,
+            skippedFiles: [],
+            totalDataRows: 0,
+          };
+          if (!parts.length) return { text: "", mergeInfo: emptyInfo };
+
+          function linesFromText(t) {
+            return String(stripBom(t || ""))
+              .split(/\r?\n/)
+              .filter(function (l) {
+                return l.length > 0;
+              });
+          }
+
+          var skippedFiles = [];
+          var headerList = [];
+
+          for (var p = 0; p < parts.length; p++) {
+            var lines = linesFromText(parts[p].text);
+            if (!lines.length) {
+              skippedFiles.push({ name: parts[p].name, reason: "empty" });
+              continue;
+            }
+            var hl = parseCsvLine(lines[0]);
+            if (!hl.length) {
+              skippedFiles.push({ name: parts[p].name, reason: "empty" });
+              continue;
+            }
+            headerList.push(hl);
+          }
+
+          if (!headerList.length) {
+            return {
+              text: "",
+              mergeInfo: {
+                mergedFiles: 0,
+                totalFiles: parts.length,
+                skippedFiles: skippedFiles,
+                totalDataRows: 0,
+              },
+            };
+          }
+
+          var canonicalHeader = buildCanonicalHeaderFromHeaders(headerList);
+          if (!canonicalHeader.length) {
+            return {
+              text: "",
+              mergeInfo: {
+                mergedFiles: 0,
+                totalFiles: parts.length,
+                skippedFiles: skippedFiles,
+                totalDataRows: 0,
+              },
+            };
+          }
+
+          var outLines = [formatCsvLine(canonicalHeader)];
+          var mergedCount = 0;
+
+          for (var p2 = 0; p2 < parts.length; p2++) {
+            var lines2 = linesFromText(parts[p2].text);
+            if (!lines2.length) continue;
+            var hdr2 = parseCsvLine(lines2[0]);
+            if (!hdr2.length) continue;
+            var fileMap = headerNormToIndexMap(hdr2);
+            mergedCount++;
+            for (var r = 1; r < lines2.length; r++) {
+              var row = parseCsvLine(lines2[r]);
+              if (
+                row.every(function (c) {
+                  return !String(c).trim();
+                })
+              )
+                continue;
+              outLines.push(
+                formatCsvLine(mapRowToCanonical(row, fileMap, canonicalHeader))
+              );
+            }
+          }
+
+          var totalDataRows = Math.max(0, outLines.length - 1);
+          return {
+            text: outLines.join("\n"),
+            mergeInfo: {
+              mergedFiles: mergedCount,
+              totalFiles: parts.length,
+              skippedFiles: skippedFiles,
+              totalDataRows: totalDataRows,
+            },
+          };
+        }
+
+        /**
+         * @param {string[]} header
+         * @param {string[]} aliases
+         */
+        function colIndex(header, aliases) {
+          var n = header.map(normHeader);
+          for (var a = 0; a < aliases.length; a++) {
+            var key = normHeader(aliases[a]);
+            var idx = n.indexOf(key);
+            if (idx >= 0) return idx;
+          }
+          return -1;
+        }
+
+        /** bName·Index 이름 정규화(공백·제로폭·NFC) */
+        function normalizePfpKey(s) {
+          var t = String(s || "").replace(/[\u200b-\u200d\ufeff]/g, "").trim();
+          try {
+            if (t.normalize) t = t.normalize("NFC");
+          } catch (e) {}
+          return t;
+        }
+
+        function countPfpMapEntries(map) {
+          if (!map) return 0;
+          var n = 0;
+          for (var k in map) {
+            if (Object.prototype.hasOwnProperty.call(map, k)) n++;
+          }
+          return n;
+        }
+
+        function lookupPfpIndexInMap(map, displayName) {
+          if (!map) return null;
+          var k = normalizePfpKey(displayName);
+          if (!k) return null;
+          if (map[k] != null) return map[k];
+          var kl = k.toLowerCase();
+          for (var mk in map) {
+            if (!Object.prototype.hasOwnProperty.call(map, mk)) continue;
+            if (normalizePfpKey(mk).toLowerCase() === kl) return map[mk];
+          }
+          return null;
+        }
+
+        /**
+         * Index.csv: Name·Index 열(또는 1열 이름·2열 숫자). C열 Index(구글시트)도 헤더에 Index면 자동 인식.
+         */
+        function parseIndexCsvMapping(text) {
+          var map = Object.create(null);
+          var lines = String(stripBom(text || ""))
+            .split(/\r?\n/)
+            .filter(function (l) {
+              return l.length > 0;
+            });
+          if (!lines.length) return map;
+          var header = parseCsvLine(lines[0]);
+          var iName = colIndex(header, [
+            "name",
+            "bname",
+            "playername",
+            "선수",
+            "이름",
+          ]);
+          var iIdx = colIndex(header, ["index", "idx", "pfpindex", "pfp"]);
+          if (iName < 0) iName = 0;
+          if (iIdx < 0) iIdx = 1;
+          for (var r = 1; r < lines.length; r++) {
+            var row = parseCsvLine(lines[r]);
+            if (!row.length) continue;
+            var name = String(row[iName] != null ? row[iName] : "").trim();
+            var idxRaw = String(row[iIdx] != null ? row[iIdx] : "").trim();
+            if (!name) continue;
+            if (normHeader(name) === "name") continue;
+            if (!/^\d+$/.test(idxRaw)) continue;
+            var canon = normalizePfpKey(name);
+            if (canon) map[canon] = idxRaw;
+          }
+          return map;
+        }
+
+        function applyBatterProfilePhoto(displayName) {
+          var img = document.getElementById("batter-header-photo");
+          if (!img) return;
+          var key = normalizePfpKey(displayName);
+          if (pfpNameToIndexMap === null) {
+            img.classList.remove("is-pfp-missing");
+            img.crossOrigin = "anonymous";
+            img.src = PFP_DEFAULT_URL;
+            return;
+          }
+          var idx = lookupPfpIndexInMap(pfpNameToIndexMap, key);
+          if (idx != null && String(idx).length) {
+            img.classList.remove("is-pfp-missing");
+            var url = PFP_BASE_URL + String(idx).trim() + ".png";
+            img.crossOrigin = "anonymous";
+            img.src = url;
+            return;
+          }
+          img.classList.add("is-pfp-missing");
+          img.removeAttribute("src");
+        }
+
+        function parseNum(v) {
+          var n = Number(String(v).replace(",", ".").trim());
+          return Number.isFinite(n) ? n : NaN;
+        }
+
+        function parseBoolField(v) {
+          var s = String(v != null ? v : "")
+            .trim()
+            .toLowerCase();
+          if (s === "true" || s === "1" || s === "yes" || s === "t") return true;
+          if (s === "false" || s === "0" || s === "no" || s === "f" || s === "")
+            return false;
+          var n = Number(String(v).replace(",", ".").trim());
+          if (n === 1) return true;
+          if (n === 0 && String(v).trim() !== "") return false;
+          return false;
+        }
+
+        function hitSprayFillColor(res, b1) {
+          var r = Math.round(Number(res));
+          if (r === 1 && !b1) return "#dc2626";
+          if (r === 2 && !b1) return "#ea580c";
+          if (r === 2 && b1) return "#16a34a";
+          if (r === 3) return "#ca8a04";
+          if (r === 4) return "#2563eb";
+          return "#94a3b8";
+        }
+
+        function destroyCharts() {}
+
+        /** pType 등 정수 코드 → 공식 표시명 (구종 패밀리 통합 라벨) */
+        var PTYPE_LABEL = {
+          0: "Fastball (직구)",
+          1: "Knuckleball (너클볼)",
+          2: "Rising Slider-S",
+          3: "Slider-S",
+          4: "Slider-A",
+          5: "Slider-F",
+          6: "Sinker-S",
+          7: "Sinker-A",
+          8: "Sinker-F",
+          9: "Rising Sinker-S",
+          10: "Splitter-S",
+          11: "Splitter-A",
+          12: "Splitter-F",
+          13: "Curve-S",
+          14: "Screwball-S",
+          15: "Rising-S",
+          16: "Rising-A",
+          17: "Rising-F",
+          18: "Rising Slider-A",
+          19: "Rising Slider-F",
+          20: "Rising Sinker-A",
+          21: "Rising Sinker-F",
+          22: "Curve-A",
+          23: "Curve-F",
+          24: "Screwball-A",
+          25: "Screwball-F",
+          26: "포심 패스트볼 S",
+          27: "포심 패스트볼 A",
+          28: "포심 패스트볼 F",
+          29: "커터 S",
+          30: "커터 A",
+          31: "커터 F",
+          32: "투심 패스트볼 S",
+          33: "투심 패스트볼 A",
+          34: "투심 패스트볼 F",
+          35: "드롭 패스트볼 S",
+          36: "드롭 패스트볼 A",
+          37: "드롭 패스트볼 F",
+          38: "스트레이트 체인지업",
+          39: "라이즈 체인지업 S",
+          40: "라이즈 체인지업 A",
+          41: "라이즈 체인지업 F",
+          42: "서클 체인지업 S",
+          43: "서클 체인지업 A",
+          44: "서클 체인지업 F",
+          45: "페이드 체인지업 S",
+          46: "페이드 체인지업 A",
+          47: "페이드 체인지업 F",
+          48: "드롭 체인지업 S",
+          49: "드롭 체인지업 A",
+          50: "드롭 체인지업 F",
+        };
+
+        function pitchTypeCodeToDisplayName(raw) {
+          var s = String(raw != null ? raw : "").trim();
+          if (!s) return "(미표기)";
+          var n = parseNum(s);
+          if (Number.isFinite(n) && n === Math.floor(n)) {
+            var k = Math.floor(n);
+            if (Object.prototype.hasOwnProperty.call(PTYPE_LABEL, k)) {
+              return PTYPE_LABEL[k];
+            }
+            return "구종 " + k;
+          }
+          return s;
+        }
+
+        /** S/A/F 변형(공백 또는 하이픈)을 제거해 패밀리명으로 통합 */
+        function displayNameToFamilyName(display) {
+          if (!display || display === "(미표기)") return display;
+          var s = String(display).trim();
+          if (/ [SAF]$/.test(s)) {
+            return s.slice(0, -2).trimEnd();
+          }
+          if (/-[SAF]$/.test(s)) {
+            return s.slice(0, -2);
+          }
+          return s;
+        }
+
+        function pitchTypeCodeToFamilyName(raw) {
+          var s0 = String(raw != null ? raw : "").trim();
+          var n0 = parseNum(s0);
+          if (Number.isFinite(n0) && n0 === 0) {
+            return "Fastball (직구)";
+          }
+          return displayNameToFamilyName(pitchTypeCodeToDisplayName(raw));
+        }
+
+        function rowPitchLabel(row, idxType) {
+          if (idxType < 0) return "(미표기)";
+          return pitchTypeCodeToFamilyName(row[idxType]);
+        }
+
+        /**
+         * 내부 캐논 패밀리명 → 표시 문구 (집계·비교는 rowPitchLabel 캐논 문자열 유지)
+         * 키는 pitchTypeCodeToFamilyName·PITCH_FAMILY_GROUP_* 과 동일해야 함
+         */
+        var PITCH_FAMILY_DISPLAY = {
+          "Fastball (직구)": {
+            ko: "Fastball (직구)",
+            en: "Four-seam fastball",
+            ja: "フォーシーム・ファストボール",
+          },
+          Fastball: {
+            ko: "패스트볼",
+            en: "Fastball",
+            ja: "ファストボール",
+          },
+          "포심 패스트볼": {
+            ko: "포심 패스트볼",
+            en: "Four-seam fastball",
+            ja: "フォーシーム",
+          },
+          "투심 패스트볼": {
+            ko: "투심 패스트볼",
+            en: "Two-seam fastball",
+            ja: "ツーシーム",
+          },
+          "드롭 패스트볼": {
+            ko: "드롭 패스트볼",
+            en: "Drop fastball",
+            ja: "ドロップ速球",
+          },
+          "스트레이트 체인지업": {
+            ko: "스트레이트 체인지업",
+            en: "Straight changeup",
+            ja: "ストレートチェンジ",
+          },
+          "라이즈 체인지업": {
+            ko: "라이즈 체인지업",
+            en: "Rise changeup",
+            ja: "ライズチェンジ",
+          },
+          "서클 체인지업": {
+            ko: "서클 체인지업",
+            en: "Circle changeup",
+            ja: "サークルチェンジ",
+          },
+          "페이드 체인지업": {
+            ko: "페이드 체인지업",
+            en: "Fade changeup",
+            ja: "フェードチェンジ",
+          },
+          "드롭 체인지업": {
+            ko: "드롭 체인지업",
+            en: "Drop changeup",
+            ja: "ドロップチェンジ",
+          },
+          커터: {
+            ko: "커터",
+            en: "Cutter",
+            ja: "カッター",
+          },
+          Splitter: {
+            ko: "스플리터",
+            en: "Splitter",
+            ja: "スプリット",
+          },
+          스플리터: {
+            ko: "스플리터",
+            en: "Splitter",
+            ja: "スプリット",
+          },
+          Slider: {
+            ko: "슬라이더",
+            en: "Slider",
+            ja: "スライダー",
+          },
+          "Rising Slider": {
+            ko: "라이징 슬라이더",
+            en: "Rising slider",
+            ja: "ライズスライダー",
+          },
+          Curve: {
+            ko: "커브",
+            en: "Curve",
+            ja: "カーブ",
+          },
+          Rising: {
+            ko: "라이징",
+            en: "Rising",
+            ja: "ライズ",
+          },
+          슬라이더: {
+            ko: "슬라이더",
+            en: "Slider",
+            ja: "スライダー",
+          },
+          커브: {
+            ko: "커브",
+            en: "Curve",
+            ja: "カーブ",
+          },
+          Sinker: {
+            ko: "싱커",
+            en: "Sinker",
+            ja: "シンカー",
+          },
+          "Rising Sinker": {
+            ko: "라이징 싱커",
+            en: "Rising sinker",
+            ja: "ライズシンカー",
+          },
+          Screwball: {
+            ko: "스크류",
+            en: "Screwball",
+            ja: "スクリュー",
+          },
+          스크류: {
+            ko: "스크류",
+            en: "Screwball",
+            ja: "スクリュー",
+          },
+          스크류볼: {
+            ko: "스크류볼",
+            en: "Screwball",
+            ja: "スクリュー",
+          },
+          싱커: {
+            ko: "싱커",
+            en: "Sinker",
+            ja: "シンカー",
+          },
+          "Knuckleball (너클볼)": {
+            ko: "Knuckleball (너클볼)",
+            en: "Knuckleball",
+            ja: "ナックルボール",
+          },
+        };
+
+        function pitchFamilyDisplayName(internal) {
+          if (internal == null) return "";
+          var s = String(internal);
+          if (s === "(미표기)") return t("pitchUnlabeled");
+          var unk = /^구종\s+(\d+)$/.exec(s);
+          if (unk) {
+            if (uiLang === "en") return "Type " + unk[1];
+            if (uiLang === "ja") return "球種 " + unk[1];
+            return s;
+          }
+          var rowDisp = PITCH_FAMILY_DISPLAY[s];
+          if (rowDisp) {
+            if (uiLang === "en") return rowDisp.en;
+            if (uiLang === "ja") return rowDisp.ja;
+            return rowDisp.ko;
+          }
+          return s;
+        }
+
+        /**
+         * A 패스트볼 / B 스플리터 / C 슬라이더(라이징슬라이더 포함) /
+         * D 커브 / E 싱커(라이징싱커 포함) / F 스크류볼
+         */
+        var PITCH_FAMILY_GROUP_A = new Set([
+          "Fastball (직구)",
+          "Fastball",
+          "포심 패스트볼",
+          "투심 패스트볼",
+          "드롭 패스트볼",
+          "스트레이트 체인지업",
+          "라이즈 체인지업",
+          "서클 체인지업",
+          "페이드 체인지업",
+          "드롭 체인지업",
+          "커터",
+        ]);
+        var PITCH_FAMILY_GROUP_B = new Set([
+          "Splitter",
+          "스플리터",
+        ]);
+        var PITCH_FAMILY_GROUP_C = new Set([
+          "Slider",
+          "Rising Slider",
+          "슬라이더",
+        ]);
+        var PITCH_FAMILY_GROUP_D = new Set([
+          "Curve",
+          "Rising",
+          "커브",
+        ]);
+        var PITCH_FAMILY_GROUP_E = new Set([
+          "Sinker",
+          "Rising Sinker",
+          "싱커",
+        ]);
+        var PITCH_FAMILY_GROUP_F = new Set(["Screwball", "스크류", "스크류볼"]);
+
+        function getPitchAbcSlot(family) {
+          if (!family || family === "(미표기)") return -1;
+          if (PITCH_FAMILY_GROUP_A.has(family)) return 0;
+          if (PITCH_FAMILY_GROUP_B.has(family)) return 1;
+          if (PITCH_FAMILY_GROUP_C.has(family)) return 2;
+          if (PITCH_FAMILY_GROUP_D.has(family)) return 3;
+          if (PITCH_FAMILY_GROUP_E.has(family)) return 4;
+          if (PITCH_FAMILY_GROUP_F.has(family)) return 5;
+          var t = String(family).trim();
+          if (/^fastball(\s*\(직구\))?$/i.test(t)) return 0;
+          return -1;
+        }
+
+        function applyQuadAbcLabels() {}
+
+        /** CSV에 등장한 모든 구종(패밀리 기준), 빈도 내림차순 */
+        function allPitchTypesSorted(rows, idxType) {
+          if (idxType < 0) return [];
+          var counts = new Map();
+          for (var i = 0; i < rows.length; i++) {
+            var t = rowPitchLabel(rows[i], idxType);
+            counts.set(t, (counts.get(t) || 0) + 1);
+          }
+          var arr = Array.from(counts.entries());
+          arr.sort(function (a, b) {
+            return b[1] - a[1];
+          });
+          return arr.map(function (x) {
+            return x[0];
+          });
+        }
+
+        var STATS_VALUE_COLS = 12;
+
+        function rebuildBatterStatsTable(pitchNames) {
+          var tb = document.getElementById("batter-stats-tbody");
+          if (!tb) return;
+          tb.replaceChildren();
+          for (var i = 0; i < pitchNames.length; i++) {
+            var tr = document.createElement("tr");
+            var th = document.createElement("th");
+            th.scope = "row";
+            th.setAttribute("data-pitch-canon", pitchNames[i]);
+            th.textContent = pitchFamilyDisplayName(pitchNames[i]);
+            tr.appendChild(th);
+            for (var c = 0; c < STATS_VALUE_COLS; c++) {
+              var td = document.createElement("td");
+              td.textContent = "—";
+              tr.appendChild(td);
+            }
+            tb.appendChild(tr);
+          }
+        }
+
+        /**
+         * Strike% 분자(합집합, 행당 1회): call===0 · bSwing&&call===0(위에 포함) ·
+         * strk∈{0,1}&&result===3
+         */
+        function rowCountsStrikeForPct(row, ix) {
+          if (ix.idxCall >= 0) {
+            var c0 = parseNum(row[ix.idxCall]);
+            if (Number.isFinite(c0) && c0 === 0) return true;
+          }
+          if (ix.idxStrk >= 0 && ix.idxResult >= 0) {
+            var s = parseNum(row[ix.idxStrk]);
+            var r = parseNum(row[ix.idxResult]);
+            if (
+              Number.isFinite(s) &&
+              Number.isFinite(r) &&
+              (s === 0 || s === 1) &&
+              r === 3
+            ) {
+              return true;
+            }
+          }
+          return false;
+        }
+
+        function formatPct(num, denom) {
+          if (denom <= 0) return "—";
+          return ((100 * num) / denom).toFixed(1) + "%";
+        }
+
+        function rowInZone(row, ix) {
+          if (ix.idxZx < 0 || ix.idxZy < 0) return false;
+          var x = parseNum(row[ix.idxZx]);
+          var y = parseNum(row[ix.idxZy]);
+          if (!Number.isFinite(x) || !Number.isFinite(y)) return false;
+          return x >= -1 && x <= 1 && y >= -1 && y <= 1;
+        }
+
+        /** 존 밖: zx·zy가 모두 유효하고, 둘 중 하나 이상이 (-1,1) 밖 */
+        function rowOutZone(row, ix) {
+          if (ix.idxZx < 0 || ix.idxZy < 0) return false;
+          var x = parseNum(row[ix.idxZx]);
+          var y = parseNum(row[ix.idxZy]);
+          if (!Number.isFinite(x) || !Number.isFinite(y)) return false;
+          return x > 1 || x < -1 || y > 1 || y < -1;
+        }
+
+        function rowWhiffLike(row, ix) {
+          if (ix.idxResult >= 0) {
+            var r = parseNum(row[ix.idxResult]);
+            if (Number.isFinite(r) && r === 0) return true;
+          }
+          if (ix.idxCall >= 0) {
+            var c = parseNum(row[ix.idxCall]);
+            if (Number.isFinite(c) && c === 0) return true;
+          }
+          return false;
+        }
+
+        function rowPutAwayStrike(row, ix) {
+          if (ix.idxCall >= 0) {
+            var c = parseNum(row[ix.idxCall]);
+            if (Number.isFinite(c) && c === 0) return true;
+          }
+          if (ix.idxBSwing >= 0 && ix.idxResult >= 0) {
+            if (parseBoolField(row[ix.idxBSwing])) {
+              var r = parseNum(row[ix.idxResult]);
+              if (Number.isFinite(r) && r === 0) return true;
+            }
+          }
+          return false;
+        }
+
+        function rowBSwing(row, ix) {
+          return ix.idxBSwing >= 0 && parseBoolField(row[ix.idxBSwing]);
+        }
+
+        /**
+         * AVG 분모: result∈{1,2,3} 또는 (strk===2이고 call이 스트라이크=0)
+         * 분자: result===2 이고 1BSafe
+         */
+        function rowAvgDenominator(row, ix) {
+          if (ix.idxResult >= 0) {
+            var res = parseNum(row[ix.idxResult]);
+            if (Number.isFinite(res)) {
+              var ri = Math.round(res);
+              if (Math.abs(ri - res) < 1e-6 && (ri === 1 || ri === 2 || ri === 3))
+                return true;
+            }
+          }
+          if (ix.idxStrk >= 0 && ix.idxCall >= 0) {
+            var st = parseNum(row[ix.idxStrk]);
+            var cl = parseNum(row[ix.idxCall]);
+            if (
+              Number.isFinite(st) &&
+              st === 2 &&
+              Number.isFinite(cl) &&
+              cl === 0
+            ) {
+              return true;
+            }
+          }
+          return false;
+        }
+
+        function rowAvgNumerator(row, ix) {
+          if (ix.idxResult < 0 || ix.idx1BSafe < 0) return false;
+          var res = parseNum(row[ix.idxResult]);
+          if (!Number.isFinite(res) || res !== 2) return false;
+          return parseBoolField(row[ix.idx1BSafe]);
+        }
+
+        function formatAvg3(num, denom) {
+          if (denom <= 0) return "—";
+          return (num / denom).toFixed(3);
+        }
+
+        function rowResultBip1to4(row, ix) {
+          if (ix.idxResult < 0) return false;
+          var res = parseNum(row[ix.idxResult]);
+          if (!Number.isFinite(res)) return false;
+          var ri = Math.round(res);
+          if (Math.abs(ri - res) > 1e-6) return false;
+          return ri >= 1 && ri <= 4;
+        }
+
+        /** Barrel: result 1~4, ldeg 25~30°, ev ≥ 125 */
+        function rowIsBarrel(row, ix) {
+          if (!rowResultBip1to4(row, ix)) return false;
+          if (ix.idxLaunch < 0 || ix.idxEv < 0) return false;
+          var ld = parseNum(row[ix.idxLaunch]);
+          var evv = parseNum(row[ix.idxEv]);
+          if (!Number.isFinite(ld) || !Number.isFinite(evv)) return false;
+          return ld >= 25 && ld <= 30 && evv >= 125;
+        }
+
+        /** HardHit%: Barrel%와 동일 분모, 분자는 ev ≥ 130 (result 1~4 타구만) */
+        function rowIsHardHit(row, ix) {
+          if (!rowResultBip1to4(row, ix)) return false;
+          if (ix.idxEv < 0) return false;
+          var evv = parseNum(row[ix.idxEv]);
+          return Number.isFinite(evv) && evv >= 130;
+        }
+
+        function fillBatterStatsPitchRates(rows, pitchNames, ix) {
+          var tb = document.getElementById("batter-stats-tbody");
+          if (!tb || !pitchNames || !pitchNames.length) return;
+          var idxType = ix.idxType;
+          if (idxType < 0) return;
+          var trs = tb.getElementsByTagName("tr");
+          for (var i = 0; i < pitchNames.length; i++) {
+            var fam = pitchNames[i];
+            var total = 0;
+            var strikeNum = 0;
+            var inZ = 0;
+            var inZSwing = 0;
+            var outZ = 0;
+            var outSwing = 0;
+            var swingCount = 0;
+            var swingWhiff = 0;
+            var swStrNum = 0;
+            var cswDen = 0;
+            var cswNum = 0;
+            var pa2 = 0;
+            var paNum = 0;
+            var avgDen = 0;
+            var avgNum = 0;
+            var barrelDen = 0;
+            var barrelNum = 0;
+            var hardHitNum = 0;
+
+            for (var r = 0; r < rows.length; r++) {
+              var row = rows[r];
+              if (rowPitchLabel(row, idxType) !== fam) continue;
+              total++;
+              if (rowCountsStrikeForPct(row, ix)) strikeNum++;
+              if (rowAvgDenominator(row, ix)) avgDen++;
+              if (rowAvgNumerator(row, ix)) avgNum++;
+
+              var iz = rowInZone(row, ix);
+              var oz = rowOutZone(row, ix);
+              var sw = rowBSwing(row, ix);
+
+              if (iz) {
+                inZ++;
+                if (sw) {
+                  inZSwing++;
+                  cswDen++;
+                  if (rowWhiffLike(row, ix)) cswNum++;
+                }
+              }
+              if (oz) {
+                outZ++;
+                if (sw) outSwing++;
+              }
+              if (sw) {
+                swingCount++;
+                if (rowWhiffLike(row, ix)) {
+                  swingWhiff++;
+                  swStrNum++;
+                }
+              }
+              if (ix.idxStrk >= 0) {
+                var st = parseNum(row[ix.idxStrk]);
+                if (Number.isFinite(st) && st === 2) {
+                  pa2++;
+                  if (rowPutAwayStrike(row, ix)) paNum++;
+                }
+              }
+              if (rowResultBip1to4(row, ix)) {
+                barrelDen++;
+                if (rowIsBarrel(row, ix)) barrelNum++;
+                if (rowIsHardHit(row, ix)) hardHitNum++;
+              }
+            }
+
+            var rowEl = trs[i];
+            if (!rowEl || !rowEl.cells || rowEl.cells.length < 13) continue;
+            rowEl.cells[1].textContent = String(total);
+            rowEl.cells[2].textContent = formatPct(strikeNum, total);
+            rowEl.cells[3].textContent = formatPct(inZ, total);
+            rowEl.cells[4].textContent = formatPct(inZSwing, inZ);
+            rowEl.cells[5].textContent = formatPct(outSwing, outZ);
+            rowEl.cells[6].textContent = formatPct(swingWhiff, swingCount);
+            rowEl.cells[7].textContent = formatPct(swStrNum, total);
+            rowEl.cells[8].textContent = formatPct(cswNum, cswDen);
+            rowEl.cells[9].textContent = formatPct(paNum, pa2);
+            rowEl.cells[10].textContent = formatAvg3(avgNum, avgDen);
+            if (ix.idxLaunch < 0 || ix.idxEv < 0) {
+              rowEl.cells[11].textContent = "—";
+            } else {
+              rowEl.cells[11].textContent = formatPct(barrelNum, barrelDen);
+            }
+            if (ix.idxEv < 0) {
+              rowEl.cells[12].textContent = "—";
+            } else {
+              rowEl.cells[12].textContent = formatPct(hardHitNum, barrelDen);
+            }
+          }
+        }
+
+        function modeName(rows, idxName) {
+          if (idxName < 0) return "—";
+          var counts = new Map();
+          for (var i = 0; i < rows.length; i++) {
+            var n = String(rows[i][idxName] != null ? rows[i][idxName] : "").trim();
+            if (!n) continue;
+            counts.set(n, (counts.get(n) || 0) + 1);
+          }
+          var best = "—";
+          var bestC = 0;
+          counts.forEach(function (c, name) {
+            if (c > bestC) {
+              bestC = c;
+              best = name;
+            }
+          });
+          return best;
+        }
+
+        /**
+         * 스프레이 필드: 중심 필드좌표 (0,−20), 꼭짓각 (0,−135), 90° 호.
+         * 작은 호 안: 각도 4등분 · 밖: 3등분(작은~큰 호 사이 방사선만).
+         * lx,lz 우선, 없으면 cx,cz. 좌우는 화면에서 −lx로 맞춤(3루/1루 방향).
+         */
+        function drawSprayField(ctx, w, h, hits) {
+          var W_CX = 0;
+          var W_CZ = -20;
+          var W_TOP_Z = -135;
+          var worldR = Math.abs(W_TOP_Z - W_CZ);
+          var scx = w * 0.5;
+          var scy = h * 0.9;
+          var R = Math.min(w, h) * 0.72;
+          var scale = R / worldR;
+          var halfArc = Math.PI / 4;
+
+          ctx.clearRect(0, 0, w, h);
+          ctx.beginPath();
+          ctx.moveTo(scx, scy);
+          ctx.arc(
+            scx,
+            scy,
+            R,
+            -Math.PI / 2 - halfArc,
+            -Math.PI / 2 + halfArc,
+            false
+          );
+          ctx.closePath();
+          ctx.fillStyle = "#ecfdf5";
+          ctx.fill();
+          ctx.strokeStyle = "#94a3b8";
+          ctx.lineWidth = 2.25;
+          ctx.stroke();
+
+          var arcStart = -Math.PI / 2 - halfArc;
+          var arcEnd = -Math.PI / 2 + halfArc;
+          var arcSpan = arcEnd - arcStart;
+          var innerR = 45 * scale;
+          var tri1 = arcStart + arcSpan / 3;
+          var tri2 = arcStart + (2 * arcSpan) / 3;
+          var quad1 = arcStart + arcSpan / 4;
+          var quad2 = arcStart + arcSpan / 2;
+          var quad3 = arcStart + (3 * arcSpan) / 4;
+
+          ctx.strokeStyle = "#cbd5e1";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.arc(
+            scx,
+            scy,
+            innerR,
+            arcStart,
+            arcEnd,
+            false
+          );
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(scx, scy);
+          ctx.lineTo(scx + innerR * Math.cos(quad1), scy + innerR * Math.sin(quad1));
+          ctx.moveTo(scx, scy);
+          ctx.lineTo(scx + innerR * Math.cos(quad2), scy + innerR * Math.sin(quad2));
+          ctx.moveTo(scx, scy);
+          ctx.lineTo(scx + innerR * Math.cos(quad3), scy + innerR * Math.sin(quad3));
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(scx + innerR * Math.cos(tri1), scy + innerR * Math.sin(tri1));
+          ctx.lineTo(scx + R * Math.cos(tri1), scy + R * Math.sin(tri1));
+          ctx.moveTo(scx + innerR * Math.cos(tri2), scy + innerR * Math.sin(tri2));
+          ctx.lineTo(scx + R * Math.cos(tri2), scy + R * Math.sin(tri2));
+          ctx.stroke();
+
+          ctx.fillStyle = "#64748b";
+          ctx.font = "13px system-ui,sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText(t("field3b"), scx - R * 0.92, scy - R * 0.06);
+          ctx.fillText(t("fieldCf"), scx, scy - R * 1.02);
+          ctx.fillText(t("field1b"), scx + R * 0.92, scy - R * 0.06);
+          ctx.fillStyle = "#0f172a";
+          ctx.font = "12px system-ui,sans-serif";
+          ctx.fillText(
+            "",
+            scx,
+            16
+          );
+
+          var innerRSq = innerR * innerR;
+          var w0i = 0;
+          var w1i = 0;
+          var w2i = 0;
+          var w3i = 0;
+          var w0o = 0;
+          var w1o = 0;
+          var w2o = 0;
+          for (var zi = 0; zi < hits.length; zi++) {
+            var hz = hits[zi];
+            var szx = scx - hz.x * scale;
+            var szy = scy + ((hz.z - W_CZ) / worldR) * R;
+            var zth = Math.atan2(szy - scy, szx - scx);
+            if (zth < arcStart || zth > arcEnd) continue;
+            var dxz = szx - scx;
+            var dyz = szy - scy;
+            var inSmall = dxz * dxz + dyz * dyz <= innerRSq;
+            if (inSmall) {
+              if (zth < quad1) w0i++;
+              else if (zth < quad2) w1i++;
+              else if (zth < quad3) w2i++;
+              else w3i++;
+            } else {
+              if (zth < tri1) w0o++;
+              else if (zth < tri2) w1o++;
+              else w2o++;
+            }
+          }
+          var inTotal = w0i + w1i + w2i + w3i;
+          var outTotal = w0o + w1o + w2o;
+          var pct = function (c, n) {
+            if (!n) return "—";
+            return String(Math.round((100 * c) / n)) + "%";
+          };
+          var rLblInQuad = innerR * 0.52;
+          var rLblOut = R * 0.62;
+          var midIn0 = arcStart + arcSpan / 8;
+          var midIn1 = arcStart + (3 * arcSpan) / 8;
+          var midIn2 = arcStart + (5 * arcSpan) / 8;
+          var midIn3 = arcStart + (7 * arcSpan) / 8;
+          var midOut0 = arcStart + arcSpan / 6;
+          var midOut1 = arcStart + arcSpan / 2;
+          var midOut2 = arcStart + (5 * arcSpan) / 6;
+
+          for (var i = 0; i < hits.length; i++) {
+            var hi = hits[i];
+            var lx = hi.x;
+            var lz = hi.z;
+            var sx = scx - lx * scale;
+            var sy = scy + ((lz - W_CZ) / worldR) * R;
+            var ddx = sx - scx;
+            var ddy = sy - scy;
+            var dotInSmall = ddx * ddx + ddy * ddy <= innerRSq;
+            ctx.fillStyle = hitSprayFillColor(hi.result, hi.b1);
+            ctx.beginPath();
+            ctx.arc(sx, sy, 3, 0, Math.PI * 2);
+            ctx.fill();
+            if (dotInSmall) {
+              ctx.strokeStyle = "rgba(15,23,42,0.55)";
+              ctx.lineWidth = 2;
+            } else {
+              ctx.strokeStyle = "rgba(15,23,42,0.28)";
+              ctx.lineWidth = 1;
+            }
+            ctx.stroke();
+          }
+
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          function strokeFillAt(tx, ty, text, fontSpec, fillHex) {
+            ctx.font = fontSpec;
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = "rgba(255,255,255,0.9)";
+            ctx.strokeText(text, tx, ty);
+            ctx.fillStyle = fillHex;
+            ctx.fillText(text, tx, ty);
+          }
+          function drawInLabel(angle, wi) {
+            strokeFillAt(
+              scx + rLblInQuad * Math.cos(angle),
+              scy + rLblInQuad * Math.sin(angle),
+              pct(wi, inTotal),
+              "bold 11px system-ui,sans-serif",
+              "#0f172a"
+            );
+          }
+          function drawOutLabel(angle, wo) {
+            strokeFillAt(
+              scx + rLblOut * Math.cos(angle),
+              scy + rLblOut * Math.sin(angle),
+              pct(wo, outTotal),
+              "bold 13px system-ui,sans-serif",
+              "#334155"
+            );
+          }
+          drawInLabel(midIn0, w0i);
+          drawInLabel(midIn1, w1i);
+          drawInLabel(midIn2, w2i);
+          drawInLabel(midIn3, w3i);
+          drawOutLabel(midOut0, w0o);
+          drawOutLabel(midOut1, w1o);
+          drawOutLabel(midOut2, w2o);
+        }
+
+        function renderReportForCurrentBatter() {
+          if (!reportCache) {
+            applyBatterProfilePhoto("");
+            return { ok: true, warn: "" };
+          }
+          var ix = reportCache.indices;
+          var full = reportCache.fullRows;
+          var batters = reportCache.batters;
+          var rows = full;
+          var selEl = document.getElementById("batter-select");
+          var sel = selEl && selEl.value ? String(selEl.value) : "";
+          var dName = document.getElementById("batter-display-name");
+          var dHand = document.getElementById("batter-hand");
+
+          if (ix.idxBName >= 0) {
+            if (!sel || !batters.length) {
+              rows = [];
+              if (dName) dName.textContent = "—";
+              if (dHand) dHand.textContent = "";
+            } else {
+              rows = full.filter(function (row) {
+                return (
+                  String(row[ix.idxBName] != null ? row[ix.idxBName] : "").trim() ===
+                  sel
+                );
+              });
+              if (dName) dName.textContent = sel;
+              var htxt = "";
+              for (var bi = 0; bi < batters.length; bi++) {
+                if (batters[bi].name === sel) {
+                  htxt = bZoneToHand(batters[bi].bZone);
+                  break;
+                }
+              }
+              if (dHand) {
+                dHand.textContent =
+                  (htxt ? " " + htxt : "") + pitcherFilterVsLabel();
+              }
+            }
+          } else {
+            rows = full;
+            if (dName) dName.textContent = modeName(full, ix.idxName);
+            if (dHand) dHand.textContent = pitcherFilterVsLabel();
+          }
+
+          var phIdx = ix.idxPHand;
+          var phModeEl = document.querySelector(
+            'input[name="pitcher-hand-filter"]:checked'
+          );
+          var phMode = phModeEl ? String(phModeEl.value) : "all";
+          if (phMode !== "all" && phIdx >= 0) {
+            rows = rows.filter(function (row) {
+              return rowPassesPitcherHandFilter(row, phIdx, phMode);
+            });
+          }
+
+          var idxType = ix.idxType;
+          var idxCall = ix.idxCall;
+          var idxResult = ix.idxResult;
+          var idxLx = ix.idxLx;
+          var idxLz = ix.idxLz;
+          var idxCx = ix.idxCx;
+          var idxCz = ix.idxCz;
+          var idx1BSafe = ix.idx1BSafe;
+
+          function angleChartFilterActive() {
+            return idxCall >= 0;
+          }
+
+          /** 인플레이 타구만: call === 2 */
+          function rowPassesAngleChartFilter(row) {
+            if (!angleChartFilterActive()) return true;
+            var c = parseNum(row[idxCall]);
+            if (!Number.isFinite(c)) return false;
+            return c === 2;
+          }
+
+          var allPitchTypes =
+            idxType >= 0 ? allPitchTypesSorted(rows, idxType) : [];
+          rebuildBatterStatsTable(allPitchTypes);
+          fillBatterStatsPitchRates(rows, allPitchTypes, ix);
+
+          var sprayHits = [];
+          var hasLxLz = idxLx >= 0 && idxLz >= 0;
+          var hasCxCz = idxCx >= 0 && idxCz >= 0;
+          for (var i = 0; i < rows.length; i++) {
+            var row = rows[i];
+            if (!rowPassesAngleChartFilter(row)) continue;
+            var xi = hasLxLz ? parseNum(row[idxLx]) : NaN;
+            var zi = hasLxLz ? parseNum(row[idxLz]) : NaN;
+            if (Number.isNaN(xi) || Number.isNaN(zi)) {
+              if (hasCxCz) {
+                xi = parseNum(row[idxCx]);
+                zi = parseNum(row[idxCz]);
+              }
+            }
+            if (!Number.isNaN(xi) && !Number.isNaN(zi) && idxResult >= 0) {
+              var resHit = parseNum(row[idxResult]);
+              if (!Number.isNaN(resHit)) {
+                var b1Hit =
+                  idx1BSafe >= 0 ? parseBoolField(row[idx1BSafe]) : false;
+                sprayHits.push({
+                  x: xi,
+                  z: zi,
+                  result: resHit,
+                  b1: b1Hit,
+                });
+              }
+            }
+          }
+
+          var sc = document.getElementById("spray-field-canvas");
+          var wrap = sc && sc.parentElement;
+          if (sc && wrap) {
+            var rect = wrap.getBoundingClientRect();
+            var dpr = window.devicePixelRatio || 1;
+            var cssW = Math.max(320, rect.width);
+            var cssH = Math.max(380, rect.height);
+            sc.width = Math.floor(cssW * dpr);
+            sc.height = Math.floor(cssH * dpr);
+            sc.style.width = "100%";
+            sc.style.height = "100%";
+            var sctx = sc.getContext("2d");
+            sctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            drawSprayField(sctx, cssW, cssH, sprayHits);
+          }
+
+          var miss = [];
+          if (
+            angleChartFilterActive() &&
+            !hasLxLz &&
+            !hasCxCz
+          ) {
+            miss.push(t("missSprayField"));
+          }
+          if (!angleChartFilterActive()) {
+            miss.push(t("missCallRose"));
+          }
+          var warnParts = [];
+          if (miss.length > 0) {
+            warnParts.push(
+              t("warnPrefix") + miss.join(", ") + t("warnSuffix")
+            );
+          }
+          if (phMode !== "all" && phIdx < 0) {
+            warnParts.push(t("warnHand"));
+          }
+          var pfpName = "";
+          if (ix.idxBName >= 0 && sel) pfpName = sel;
+          else if (dName) pfpName = String(dName.textContent || "").trim();
+          if (pfpName === "—") pfpName = "";
+          applyBatterProfilePhoto(pfpName);
+          return {
+            ok: true,
+            warn: warnParts.length ? warnParts.join(" ") : "",
+          };
+        }
+
+        function processCsvText(text) {
+          destroyCharts();
+          var lines = String(stripBom(text || ""))
+            .split(/\r?\n/)
+            .filter(function (l) {
+              return l.length > 0;
+            });
+          if (!lines.length) {
+            reportCache = null;
+            populateBatterSelectUI([]);
+            var wr0 = document.getElementById("batter-select-row");
+            if (wr0) wr0.hidden = true;
+            var dn0 = document.getElementById("batter-display-name");
+            var dh0 = document.getElementById("batter-hand");
+            if (dn0) dn0.textContent = "—";
+            if (dh0) dh0.textContent = "";
+            rebuildBatterStatsTable([]);
+            applyBatterProfilePhoto("");
+            return { error: t("errEmptyFile"), rowCount: 0 };
+          }
+          var header = parseCsvLine(lines[0]);
+          var idxBName = colIndex(header, ["bName", "bname", "BName", "BNAME"]);
+          var idxBZone = colIndex(header, ["bZone", "bzone", "BZone", "BZONE"]);
+          var idxName = colIndex(header, [
+            "playerName",
+            "batter",
+            "hitter",
+            "타자",
+            "선수",
+            "name",
+          ]);
+          var idxType = colIndex(header, [
+            "pitchType",
+            "구종",
+            "pType",
+            "pitch_type",
+            "pitch",
+          ]);
+          var idxLaunch = colIndex(header, [
+            "ldeg",
+            "launchAngleDeg",
+            "launch_angle",
+            "launchangle",
+            "발사각",
+            "상하각",
+            "launch",
+          ]);
+          var idxSpray = colIndex(header, [
+            "sDeg",
+            "sprayAngleDeg",
+            "spray_angle",
+            "sprayangle",
+            "스프레이각",
+            "좌우각",
+            "spray",
+          ]);
+          var idxZx = colIndex(header, ["zoneX", "zone_x", "zonex"]);
+          var idxZy = colIndex(header, ["zoneY", "zone_y", "zoney"]);
+          var idxCall = colIndex(header, ["call", "Call", "CALL", "콜"]);
+          var idxBSwing = colIndex(header, [
+            "bSwing",
+            "bswing",
+            "BSwing",
+            "b_swing",
+            "batSwing",
+            "isBSwing",
+          ]);
+          var idxStrk = colIndex(header, [
+            "strk",
+            "Strk",
+            "STRK",
+            "strikeCount",
+            "strikes",
+            "sCnt",
+          ]);
+          var idxResult = colIndex(header, [
+            "result",
+            "Result",
+            "RESULT",
+            "타구결과",
+          ]);
+          var idxLx = colIndex(header, ["lx", "lX", "LX"]);
+          var idxLz = colIndex(header, ["lz", "lZ", "LZ"]);
+          var idxCx = colIndex(header, ["cx", "cX", "CX"]);
+          var idxCz = colIndex(header, ["cz", "cZ", "CZ"]);
+          var idx1BSafe = colIndex(header, [
+            "1BSafe",
+            "1bsafe",
+            "is1BSafe",
+            "is1bsafe",
+            "firstBaseSafe",
+            "firstbasesafe",
+          ]);
+          var idxEv = colIndex(header, [
+            "ev",
+            "EV",
+            "exitVelocity",
+            "exit_velocity",
+            "exitSpeed",
+            "exit_speed",
+            "speedKmh",
+            "hitSpeed",
+          ]);
+          var idxBatCen = colIndex(header, [
+            "batCen",
+            "batcen",
+            "BatCen",
+            "BATCEN",
+            "bat_center",
+            "batCenter",
+          ]);
+          var idxHPos = colIndex(header, [
+            "hPos",
+            "hpos",
+            "HPos",
+            "HPOS",
+            "h_pos",
+            "horizontalPos",
+            "horizontal_pos",
+          ]);
+          var idxPHand = colIndex(header, [
+            "pHand",
+            "phand",
+            "PHand",
+            "PHAND",
+            "pitcherHand",
+            "pitcher_hand",
+            "pitcherThrows",
+            "pitcher_throws",
+            "pThrows",
+            "p_throws",
+            "throws",
+            "pitHand",
+            "pit_hand",
+            "armSide",
+            "arm_side",
+            "투수",
+            "투수손",
+            "좌우투",
+          ]);
+
+          var rows = [];
+          for (var r = 1; r < lines.length; r++) {
+            var row = parseCsvLine(lines[r]);
+            if (row.length < header.length && row.every(function (c) { return !String(c).trim(); }))
+              continue;
+            rows.push(row);
+          }
+
+          var batters = extractBattersList(rows, idxBName, idxBZone);
+          reportCache = {
+            header: header,
+            fullRows: rows,
+            batters: batters,
+            indices: {
+              idxBName: idxBName,
+              idxBZone: idxBZone,
+              idxName: idxName,
+              idxType: idxType,
+              idxLaunch: idxLaunch,
+              idxSpray: idxSpray,
+              idxZx: idxZx,
+              idxZy: idxZy,
+              idxCall: idxCall,
+              idxBSwing: idxBSwing,
+              idxStrk: idxStrk,
+              idxResult: idxResult,
+              idxLx: idxLx,
+              idxLz: idxLz,
+              idxCx: idxCx,
+              idxCz: idxCz,
+              idx1BSafe: idx1BSafe,
+              idxEv: idxEv,
+              idxBatCen: idxBatCen,
+              idxHPos: idxHPos,
+              idxPHand: idxPHand,
+            },
+          };
+
+          populateBatterSelectUI(batters);
+          applyQuadAbcLabels();
+
+          var rr = renderReportForCurrentBatter();
+          return {
+            ok: rr.ok,
+            warn: rr.warn,
+            rowCount: rows.length,
+          };
+        }
+
+        var drop = document.getElementById("upload-drop-csv");
+        var input = document.getElementById("file-csv");
+        var btn = document.getElementById("btn-csv");
+        var inputIndexCsv = document.getElementById("file-index-csv");
+        var btnIndexCsv = document.getElementById("btn-index-csv");
+        var nameEl = document.getElementById("name-csv");
+        var statusEl = document.getElementById("status-csv");
+
+        function setStatus(msg, isErr) {
+          statusEl.textContent = msg || "";
+          statusEl.className = "upload-status" + (isErr ? " err" : "");
+        }
+
+        var btnExport = document.getElementById("btn-export-report-png");
+        var captureArea = document.getElementById("report-capture-area");
+
+        function sanitizeFilenamePart(s) {
+          return String(s || "")
+            .trim()
+            .replace(/[\\/:*?"<>|]/g, "_")
+            .replace(/\s+/g, " ")
+            .slice(0, 80) || "Report";
+        }
+
+        function getExportBatterName() {
+          var sel = document.getElementById("batter-select");
+          if (sel && sel.value && String(sel.value).trim())
+            return String(sel.value).trim();
+          var dn = document.getElementById("batter-display-name");
+          var nm = dn ? String(dn.textContent || "").trim() : "";
+          if (nm && nm !== "—") return nm;
+          return "Report";
+        }
+
+        function exportReportPng() {
+          if (!captureArea) {
+            setStatus(t("stNoCapture"), true);
+            return;
+          }
+          if (typeof html2canvas !== "function") {
+            setStatus(t("stNoH2c"), true);
+            return;
+          }
+          var rawName = getExportBatterName();
+          var base = sanitizeFilenamePart(rawName) + "_HitSpray";
+          if (btnExport) btnExport.disabled = true;
+          setStatus(t("stPngGen"), false);
+          html2canvas(captureArea, {
+            scale: 2,
+            useCORS: true,
+            logging: false,
+            backgroundColor: "#ffffff",
+          })
+            .then(function (canvas) {
+              canvas.toBlob(
+                function (blob) {
+                  if (btnExport) btnExport.disabled = false;
+                  if (!blob) {
+                    setStatus(t("stPngFail"), true);
+                    return;
+                  }
+                  var a = document.createElement("a");
+                  a.href = URL.createObjectURL(blob);
+                  a.download = base + ".png";
+                  document.body.appendChild(a);
+                  a.click();
+                  document.body.removeChild(a);
+                  setTimeout(function () {
+                    URL.revokeObjectURL(a.href);
+                  }, 0);
+                  setStatus(t("stSaved") + " " + base + ".png", false);
+                },
+                "image/png",
+                0.95
+              );
+            })
+            .catch(function (err) {
+              if (btnExport) btnExport.disabled = false;
+              var msg =
+                err && err.message ? String(err.message).slice(0, 100) : "";
+              setStatus(
+                t("stExportFail") + (msg ? ": " + msg : "") + t("stExportHintFile"),
+                true
+              );
+            });
+        }
+
+        function folderLabelFromFiles(files) {
+          if (!files || !files.length) return "";
+          try {
+            var p0 = files[0].webkitRelativePath;
+            if (p0 && typeof p0 === "string") {
+              var seg = p0.split("/");
+              if (seg.length > 1) return seg[0];
+            }
+          } catch (e) {}
+          return "";
+        }
+
+        function onFolderFiles(fileList) {
+          if (!fileList || !fileList.length) return;
+          var merged = filterCsvMergeFiles(fileList);
+          if (!merged.length) {
+            setStatus(t("stNoCsvFiles"), true);
+            nameEl.textContent = t("nameCsvNone");
+            nameEl.classList.remove("has-file");
+            return;
+          }
+          var indexFile = null;
+          var mergeOnly = [];
+          for (var fi = 0; fi < merged.length; fi++) {
+            var f = merged[fi];
+            var fn = String(f.name || "");
+            if (/^index\.csv$/i.test(fn)) indexFile = f;
+            else mergeOnly.push(f);
+          }
+          if (!mergeOnly.length) {
+            setStatus(t("stDataCsvOnly"), true);
+            nameEl.textContent = t("nameNeedData");
+            nameEl.classList.remove("has-file");
+            return;
+          }
+          var label =
+            folderLabelFromFiles(mergeOnly) || folderLabelFromFiles(fileList);
+          nameEl.textContent =
+            (label ? label + " · " : "") +
+            mergeOnly.length +
+            t("nameMergeSuffix") +
+            (indexFile ? " · Index.csv" : "");
+          nameEl.classList.add("has-file");
+
+          var readsMerge = mergeOnly.map(function (f) {
+            return readFileAsTextUtf8(f).then(function (text) {
+              return { name: f.name, text: text };
+            });
+          });
+          var idxPromise = indexFile
+            ? readFileAsTextUtf8(indexFile)
+            : Promise.resolve(null);
+
+          Promise.all([Promise.all(readsMerge), idxPromise])
+            .then(function (tuple) {
+              var parts = tuple[0];
+              var idxText = tuple[1];
+              pfpNameToIndexMap =
+                idxText != null ? parseIndexCsvMapping(idxText) : null;
+              var merged = mergeFolderCsvTexts(parts);
+              var res = processCsvText(merged.text);
+              var mi = merged.mergeInfo;
+              if (res.error) {
+                setStatus(res.error, true);
+                return;
+              }
+              var rowN = res.rowCount != null ? res.rowCount : mi.totalDataRows;
+              var partsMsg = tpl(t("mergeLine"), {
+                mf: mi.mergedFiles,
+                tf: mi.totalFiles,
+                row: rowN,
+              });
+              if (mi.skippedFiles.length) {
+                var sn = mi.skippedFiles
+                  .slice(0, 4)
+                  .map(function (s) {
+                    return s.name;
+                  })
+                  .join(", ");
+                if (mi.skippedFiles.length > 4)
+                  sn += tpl(t("mergeSkipMore"), {
+                    more: mi.skippedFiles.length - 4,
+                  });
+                partsMsg += tpl(t("mergeSkip"), {
+                  n: mi.skippedFiles.length,
+                  sn: sn,
+                });
+              }
+              if (indexFile) {
+                partsMsg += tpl(t("mergeProf"), {
+                  n: countPfpMapEntries(pfpNameToIndexMap),
+                });
+              }
+              setStatus(
+                partsMsg + t("stDone") + (res.warn ? " · " + res.warn : ""),
+                false
+              );
+            })
+            .catch(function () {
+              setStatus(t("stReadFail"), true);
+            });
+        }
+
+        if (btnExport) {
+          btnExport.addEventListener("click", function () {
+            exportReportPng();
+          });
+        }
+
+        btn.addEventListener("click", function () {
+          input.click();
+        });
+        if (btnIndexCsv && inputIndexCsv) {
+          btnIndexCsv.addEventListener("click", function (e) {
+            e.stopPropagation();
+            inputIndexCsv.click();
+          });
+          inputIndexCsv.addEventListener("change", function () {
+            var f = inputIndexCsv.files && inputIndexCsv.files[0];
+            if (!f) return;
+            readFileAsTextUtf8(f)
+              .then(function (text) {
+                pfpNameToIndexMap = parseIndexCsvMapping(text);
+                var n = countPfpMapEntries(pfpNameToIndexMap);
+                inputIndexCsv.value = "";
+                if (reportCache) {
+                  var res = renderReportForCurrentBatter();
+                  setStatus(
+                    t("stIdxApply") +
+                      n +
+                      t("stIdxApplyTail") +
+                      (res.warn ? " · " + res.warn : ""),
+                    false
+                  );
+                } else {
+                  applyBatterProfilePhoto("");
+                  setStatus(t("stIdxApply") + n + t("stIdxWaitData"), false);
+                }
+              })
+              .catch(function () {
+                setStatus(t("stIdxReadFail"), true);
+              });
+          });
+        }
+        input.addEventListener("change", function () {
+          onFolderFiles(input.files);
+        });
+        drop.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            input.click();
+          }
+        });
+        drop.addEventListener("dragover", function (e) {
+          e.preventDefault();
+          drop.classList.add("dragover");
+        });
+        drop.addEventListener("dragleave", function () {
+          drop.classList.remove("dragover");
+        });
+        drop.addEventListener("drop", function (e) {
+          e.preventDefault();
+          drop.classList.remove("dragover");
+          var fl = e.dataTransfer && e.dataTransfer.files;
+          if (fl && fl.length) onFolderFiles(fl);
+        });
+        drop.addEventListener("click", function (e) {
+          if (e.target === btn || btn.contains(e.target)) return;
+          if (
+            btnIndexCsv &&
+            (e.target === btnIndexCsv || btnIndexCsv.contains(e.target))
+          )
+            return;
+          if (e.target && e.target.closest && e.target.closest("#upload-lang-cell"))
+            return;
+          input.click();
+        });
+
+        var batterSelectEl = document.getElementById("batter-select");
+        if (batterSelectEl) {
+          batterSelectEl.addEventListener("change", function () {
+            if (!reportCache) return;
+            var res = renderReportForCurrentBatter();
+            setStatus(
+              t("stBatterDone") + (res.warn ? " · " + res.warn : ""),
+              false
+            );
+          });
+        }
+
+        var pitcherFilterRoot = document.getElementById("upload-side-cell");
+        if (pitcherFilterRoot) {
+          pitcherFilterRoot.addEventListener("change", function (e) {
+            if (!e.target || e.target.name !== "pitcher-hand-filter") return;
+            if (!reportCache) return;
+            var res = renderReportForCurrentBatter();
+            setStatus(
+              t("stPitchFilterDone") + (res.warn ? " · " + res.warn : ""),
+              false
+            );
+          });
+        }
+
+        var langSelectEl = document.getElementById("lang-select");
+        if (langSelectEl) {
+          langSelectEl.value = uiLang;
+          langSelectEl.addEventListener("change", function () {
+            var v = String(langSelectEl.value || "ko");
+            if (v !== "en" && v !== "ja" && v !== "ko") v = "ko";
+            uiLang = v;
+            try {
+              localStorage.setItem(UI_LANG_STORAGE, uiLang);
+            } catch (eLang) {}
+            applyUiLanguage();
+            applyQuadAbcLabels();
+            if (reportCache) renderReportForCurrentBatter();
+          });
+        }
+
+        applyUiLanguage();
+        applyQuadAbcLabels();
+      })();
+    </script>
+  </body>
+</html>

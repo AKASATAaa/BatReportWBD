@@ -1,0 +1,1631 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OAA 계산 확인기</title>
+    <style>
+      :root {
+        --bg: #0f172a;
+        --panel: #1e293b;
+        --panel2: #273449;
+        --line: #334155;
+        --text: #e2e8f0;
+        --muted: #94a3b8;
+        --accent: #38bdf8;
+        --good: #f472b6;
+        --bad: #60a5fa;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", "Malgun Gothic", system-ui, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      header {
+        padding: 16px 24px;
+        background: var(--panel);
+        border-bottom: 1px solid var(--line);
+      }
+      h1 {
+        margin: 0 0 4px;
+        font-size: 18px;
+      }
+      .sub {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      .wrap {
+        padding: 20px 24px;
+        max-width: 1280px;
+        margin: 0 auto;
+      }
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px 20px;
+        align-items: center;
+        background: var(--panel);
+        padding: 14px 16px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        margin-bottom: 18px;
+      }
+      .controls label {
+        font-size: 12px;
+        color: var(--muted);
+        display: block;
+        margin-bottom: 4px;
+      }
+      .field {
+        display: flex;
+        flex-direction: column;
+      }
+      input[type="number"],
+      select {
+        background: var(--panel2);
+        color: var(--text);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 6px 8px;
+        font-size: 13px;
+        min-width: 90px;
+      }
+      input[type="file"] {
+        color: var(--muted);
+        font-size: 12px;
+      }
+      button {
+        background: var(--accent);
+        color: #06283d;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 14px;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 13px;
+      }
+      button:hover {
+        filter: brightness(1.08);
+      }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 16px;
+        margin-bottom: 18px;
+      }
+      .card h2 {
+        margin: 0 0 12px;
+        font-size: 15px;
+        color: var(--accent);
+      }
+      .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+        gap: 10px;
+      }
+      .stat {
+        background: var(--panel2);
+        border-radius: 8px;
+        padding: 10px 12px;
+      }
+      .stat .k {
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .stat .v {
+        font-size: 18px;
+        font-weight: 700;
+        margin-top: 2px;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 12.5px;
+      }
+      th,
+      td {
+        border: 1px solid var(--line);
+        padding: 5px 8px;
+        text-align: right;
+        white-space: nowrap;
+      }
+      th {
+        background: var(--panel2);
+        position: sticky;
+        top: 0;
+        z-index: 1;
+      }
+      td.l,
+      th.l {
+        text-align: left;
+      }
+      .scroll {
+        max-height: 460px;
+        overflow: auto;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+      .pos {
+        color: var(--good);
+      }
+      .neg {
+        color: var(--bad);
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .pill {
+        display: inline-block;
+        padding: 1px 7px;
+        border-radius: 999px;
+        font-size: 11px;
+        background: var(--panel2);
+        border: 1px solid var(--line);
+      }
+      .pill.fallback {
+        color: #fbbf24;
+        border-color: #78350f;
+      }
+      .formula {
+        background: var(--panel2);
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-family: "Consolas", monospace;
+        font-size: 12.5px;
+        color: var(--muted);
+        white-space: pre-wrap;
+      }
+      .hidden {
+        display: none;
+      }
+      .row-good td {
+        background: rgba(244, 114, 182, 0.08);
+      }
+      .row-bad td {
+        background: rgba(96, 165, 250, 0.08);
+      }
+      .note {
+        color: var(--muted);
+        font-size: 12px;
+        margin: 6px 0 0;
+      }
+      .field-layout {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px;
+        align-items: flex-start;
+      }
+      .field-wrap {
+        background: #0c1222;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 8px;
+        flex: 0 0 auto;
+      }
+      #field-svg {
+        display: block;
+        width: 540px;
+        max-width: 100%;
+        height: auto;
+        overflow: hidden;
+      }
+      .field-side {
+        flex: 1 1 240px;
+        min-width: 220px;
+      }
+      .legend-bar {
+        height: 14px;
+        border-radius: 7px;
+        background: linear-gradient(
+          90deg,
+          #2563eb 0%,
+          #22d3ee 25%,
+          #eab308 55%,
+          #ef4444 100%
+        );
+        margin: 6px 0 2px;
+      }
+      .legend-scale {
+        display: flex;
+        justify-content: space-between;
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .legend-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 8px;
+        font-size: 12px;
+      }
+      .dot-sample {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+      }
+      .urz-cell {
+        cursor: pointer;
+      }
+      .urz-cell-label {
+        font-size: 7px;
+        fill: #e2e8f0;
+        text-anchor: middle;
+        dominant-baseline: middle;
+        pointer-events: none;
+      }
+      .field-mode {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 16px;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+      .field-mode label {
+        color: var(--text);
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>OAA 계산 확인기</h1>
+      <div class="sub">
+        BattingReport_v3와 동일한 식으로 OAA를 다시 계산하고, 격자 기댓값과
+        타구별 기여도를 펼쳐서 보여줍니다.
+      </div>
+    </header>
+
+    <div class="wrap">
+      <div class="controls">
+        <div class="field">
+          <label>CSV / TXT 폴더 또는 파일</label>
+          <input id="file-input" type="file" multiple webkitdirectory />
+        </div>
+        <div class="field">
+          <label>파일만 선택(폴더 X)</label>
+          <input id="file-input-files" type="file" multiple />
+        </div>
+        <div class="field">
+          <label>최소 표본(존당)</label>
+          <input id="min-cell" type="number" value="5" min="1" step="1" />
+        </div>
+        <div class="field">
+          <label>&nbsp;</label>
+          <button id="recompute">다시 계산</button>
+        </div>
+      </div>
+
+      <div id="load-info" class="note"></div>
+
+      <div id="results" class="hidden">
+        <div class="card">
+          <h2>계산식</h2>
+          <div class="formula" id="formula-box"></div>
+          <p class="note">
+            아웃 처리 = <code>result ∈ {1, 2}</code> 이고 <code>1BSafe</code> 가
+            거짓. 기댓값은 같은 URZ 존(섹터×밴드)의 리그 아웃 비율(표본 부족 시
+            리그 전체 평균으로 대체).
+          </p>
+        </div>
+
+        <div class="card">
+          <h2>리그 요약</h2>
+          <div class="stat-grid" id="league-stats"></div>
+        </div>
+
+        <div class="card">
+          <h2>URZ 격자 야구장</h2>
+          <div class="field-mode">
+            <label>
+              칸 색:
+              <select id="cell-mode">
+                <option value="rate">리그 기댓값(아웃률)</option>
+                <option value="count">표본 수</option>
+              </select>
+            </label>
+            <label>
+              <input type="checkbox" id="show-counts" checked /> 칸에 숫자 표시
+            </label>
+            <label>
+              <input type="checkbox" id="show-dots" checked /> 선택 선수 타구점
+            </label>
+            <label>
+              홈 lz:
+              <input
+                id="home-lz"
+                type="number"
+                value="-20"
+                step="1"
+                style="width: 70px"
+              />
+            </label>
+            <label>
+              최외곽 lz:
+              <input
+                id="deep-lz"
+                type="number"
+                value="-115"
+                step="1"
+                style="width: 70px"
+              />
+            </label>
+            <label>
+              중앙 lx:
+              <input
+                id="center-lx"
+                type="number"
+                value="0"
+                step="1"
+                style="width: 60px"
+              />
+            </label>
+          </div>
+          <div class="field-layout">
+            <div class="field-wrap">
+              <svg id="field-svg" viewBox="0 0 600 620" xmlns="http://www.w3.org/2000/svg">
+                <!-- 색칠 웨지(데이터) : 맨 아래 -->
+                <g id="urz-cells"></g>
+
+                <!-- ===== URZ.html 원본 ===== -->
+                <!-- 격자 -->
+                <g stroke="#334155" stroke-width="0.5" opacity="0.5">
+                  <line x1="20" y1="20" x2="20" y2="600"/> <line x1="60" y1="20" x2="60" y2="600"/>
+                  <line x1="100" y1="20" x2="100" y2="600"/> <line x1="140" y1="20" x2="140" y2="600"/>
+                  <line x1="180" y1="20" x2="180" y2="600"/> <line x1="220" y1="20" x2="220" y2="600"/>
+                  <line x1="260" y1="20" x2="260" y2="600"/> <line x1="300" y1="20" x2="300" y2="600"/>
+                  <line x1="340" y1="20" x2="340" y2="600"/> <line x1="380" y1="20" x2="380" y2="600"/>
+                  <line x1="420" y1="20" x2="420" y2="600"/> <line x1="460" y1="20" x2="460" y2="600"/>
+                  <line x1="500" y1="20" x2="500" y2="600"/> <line x1="540" y1="20" x2="540" y2="600"/>
+                  <line x1="580" y1="20" x2="580" y2="600"/>
+                  <line x1="20" y1="20" x2="580" y2="20"/> <line x1="20" y1="60" x2="580" y2="60"/>
+                  <line x1="20" y1="100" x2="580" y2="100"/> <line x1="20" y1="140" x2="580" y2="140"/>
+                  <line x1="20" y1="180" x2="580" y2="180"/> <line x1="20" y1="220" x2="580" y2="220"/>
+                  <line x1="20" y1="260" x2="580" y2="260"/> <line x1="20" y1="300" x2="580" y2="300"/>
+                  <line x1="20" y1="340" x2="580" y2="340"/> <line x1="20" y1="380" x2="580" y2="380"/>
+                  <line x1="20" y1="420" x2="580" y2="420"/> <line x1="20" y1="460" x2="580" y2="460"/>
+                  <line x1="20" y1="500" x2="580" y2="500"/> <line x1="20" y1="540" x2="580" y2="540"/>
+                  <line x1="20" y1="580" x2="580" y2="580"/>
+                </g>
+
+                <!-- ── 섹터 분할선 (빨강) ── -->
+                <!-- 방사선: 홈(300,580)에서 8등분 -->
+                <g stroke="#cc2222" stroke-width="1.1" opacity="0.85">
+                  <line x1="300" y1="580" x2="3.0" y2="283.0"/>
+                  <line x1="300" y1="580" x2="66.7" y2="230.8"/>
+                  <line x1="300" y1="580" x2="139.3" y2="192.0"/>
+                  <line x1="300" y1="580" x2="218.1" y2="168.1"/>
+                  <line x1="300" y1="580" x2="300.0" y2="160.0"/>
+                  <line x1="300" y1="580" x2="381.9" y2="168.1"/>
+                  <line x1="300" y1="580" x2="460.7" y2="192.0"/>
+                  <line x1="300" y1="580" x2="533.3" y2="230.8"/>
+                  <line x1="300" y1="580" x2="597.0" y2="283.0"/>
+                </g>
+
+                <!-- 동심 반원: 홈(300,580) 중심, 7개 -->
+                <g fill="none" stroke="#cc2222" stroke-width="1.1" opacity="0.85">
+                  <path d="M 257.6,537.6 A  60, 60 0 0,1 342.4,537.6"/>
+                  <path d="M 229.3,509.3 A 100,100 0 0,1 370.7,509.3"/>
+                  <path d="M 201.0,481.0 A 140,140 0 0,1 399.0,481.0"/>
+                  <path d="M 172.7,452.7 A 180,180 0 0,1 427.3,452.7"/>
+                  <path d="M 130.3,410.3 A 240,240 0 0,1 469.7,410.3"/>
+                  <path d="M  87.9,367.9 A 300,300 0 0,1 512.1,367.9"/>
+                  <path d="M  35.5,315.5 A 374,374 0 0,1 564.5,315.5"/>
+                </g>
+
+                <!-- ── 야구장 구조선 ── -->
+                <!-- 파울 가이드 강조 (주황) -->
+                <g stroke="#eab308" stroke-width="1.5" opacity="0.9">
+                  <line x1="300" y1="580" x2="3.0" y2="283.0"/>
+                  <line x1="300" y1="580" x2="597.0" y2="283.0"/>
+                </g>
+                <!-- 외야 담장 체인 (핑크) -->
+                <polyline
+                  points="34.9,314.9 111.4,220.0 225.4,161.1 374.7,161.3 488.5,220.7 564.6,315.9"
+                  fill="none" stroke="#f472b6" stroke-width="1.5" stroke-linejoin="round" opacity="0.92"/>
+                <!-- 내야 아크 (초록) -->
+                <path d="M 172.4,452.4 A 180.5,180.5 0 0,1 427.6,452.4"
+                  fill="none" stroke="#34d399" stroke-width="1.4" opacity="0.9"/>
+                <!-- 베이스 다이아몬드 연결선 (회색) -->
+                <polygon points="300,580 367.4,509.9 300,439.9 232.6,509.9"
+                  fill="none" stroke="#94a3b8" stroke-width="1.0" opacity="0.88"/>
+                <!-- 투수 원 (시안) -->
+                <circle cx="300" cy="509.9" r="11.4"
+                  fill="none" stroke="#22d3ee" stroke-width="1.2" opacity="0.88"/>
+                <!-- 베이스 마름모 -->
+                <polygon points="367.4,504.5 372.8,509.9 367.4,515.3 362.0,509.9"
+                  fill="none" stroke="#fbbf24" stroke-width="1.3" opacity="0.9"/>
+                <polygon points="232.6,504.5 238.0,509.9 232.6,515.3 227.2,509.9"
+                  fill="none" stroke="#fbbf24" stroke-width="1.3" opacity="0.9"/>
+                <polygon points="300,434.5 305.4,439.9 300,445.3 294.6,439.9"
+                  fill="none" stroke="#a78bfa" stroke-width="1.3" opacity="0.9"/>
+                <polygon points="300,574.6 305.4,580 300,585.4 294.6,580"
+                  fill="none" stroke="#fbbf24" stroke-width="1.3" opacity="0.9"/>
+                <!-- 홈플레이트 원 -->
+                <circle cx="300" cy="580" r="8"
+                  fill="none" stroke="#fbbf24" stroke-width="1.2" opacity="0.8"/>
+
+                <!-- 타구점·라벨 : 맨 위 -->
+                <g id="urz-dots"></g>
+                <g id="urz-labels"></g>
+              </svg>
+            </div>
+            <div class="field-side">
+              <div id="field-info" class="note"></div>
+              <div style="margin-top: 12px">
+                <div class="muted" id="legend-title">칸 색 = 리그 기댓 아웃률</div>
+                <div class="legend-bar"></div>
+                <div class="legend-scale">
+                  <span id="legend-lo">0%</span>
+                  <span id="legend-mid">50%</span>
+                  <span id="legend-hi">100%</span>
+                </div>
+              </div>
+              <div class="legend-row">
+                <span class="dot-sample" style="background:#f472b6"></span>
+                선택 선수 — 아웃 처리한 타구
+              </div>
+              <div class="legend-row">
+                <span
+                  class="dot-sample"
+                  style="background: transparent; border: 2px solid #60a5fa"
+                ></span>
+                선택 선수 — 아웃 못한 타구
+              </div>
+              <p class="note">
+                야구장(다이아몬드·펜스·파울라인) 위에 URZ.html의 빨간 폴라
+                격자(방사 8섹터 × 동심원 8밴드)를 올렸습니다. 홈플레이트=데이터
+                원점. 칸 색은 <b>선택한 선수의 포지션</b> 기준 기댓 아웃률이며,
+                선수 행을 클릭하면 그 포지션 격자로 바뀝니다.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>선수별 OAA</h2>
+          <div class="scroll">
+            <table id="fielder-table">
+              <thead>
+                <tr>
+                  <th class="l">수비수 (cPlr)</th>
+                  <th>주 포지션</th>
+                  <th>타구 수 (N)</th>
+                  <th>실제 아웃</th>
+                  <th>기대 아웃 Σ</th>
+                  <th>OAA 합</th>
+                  <th>OAA (기회당 %p)</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <p class="note">행을 클릭하면 아래에 타구별 상세가 펼쳐집니다.</p>
+        </div>
+
+        <div class="card" id="detail-card">
+          <h2 id="detail-title">선수 타구 상세</h2>
+          <div class="stat-grid" id="detail-stats"></div>
+          <div class="scroll" style="margin-top: 12px">
+            <table id="detail-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>id</th>
+                  <th>lx</th>
+                  <th>lz</th>
+                  <th class="l">URZ 존</th>
+                  <th>존 표본 N</th>
+                  <th>존 아웃수</th>
+                  <th>기댓값</th>
+                  <th class="l">기댓값 출처</th>
+                  <th>result</th>
+                  <th>1BSafe</th>
+                  <th>실제 아웃</th>
+                  <th>기여도</th>
+                  <th>누적</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 id="grid-card-title">URZ 존 기댓값 맵</h2>
+          <div class="scroll">
+            <table id="grid-table">
+              <thead>
+                <tr>
+                  <th class="l">URZ 존 (섹터-밴드)</th>
+                  <th class="l">각도 범위</th>
+                  <th class="l">반지름 밴드</th>
+                  <th>표본 N</th>
+                  <th>아웃 수</th>
+                  <th>원시 비율</th>
+                  <th>사용 기댓값</th>
+                  <th class="l">출처</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      "use strict";
+
+      /* ---- BattingReport_v3와 동일한 파싱/계산 헬퍼 ---- */
+
+      function stripBom(s) {
+        s = String(s || "");
+        if (s.charCodeAt(0) === 0xfeff) return s.slice(1);
+        return s;
+      }
+
+      function parseCsvLine(line) {
+        var out = [];
+        var field = "";
+        var i = 0;
+        var inQ = false;
+        while (i < line.length) {
+          var c = line.charAt(i);
+          if (inQ) {
+            if (c === '"') {
+              if (line.charAt(i + 1) === '"') {
+                field += '"';
+                i += 2;
+                continue;
+              }
+              inQ = false;
+              i++;
+              continue;
+            }
+            field += c;
+            i++;
+          } else {
+            if (c === '"') {
+              inQ = true;
+              i++;
+            } else if (c === ",") {
+              out.push(field);
+              field = "";
+              i++;
+            } else {
+              field += c;
+              i++;
+            }
+          }
+        }
+        out.push(field);
+        return out;
+      }
+
+      function normHeader(h) {
+        return String(h || "")
+          .trim()
+          .toLowerCase()
+          .replace(/\s+/g, "");
+      }
+
+      function colIndex(header, aliases) {
+        var n = header.map(normHeader);
+        for (var a = 0; a < aliases.length; a++) {
+          var key = normHeader(aliases[a]);
+          var idx = n.indexOf(key);
+          if (idx >= 0) return idx;
+        }
+        return -1;
+      }
+
+      function parseNum(v) {
+        var n = Number(String(v).replace(",", ".").trim());
+        return Number.isFinite(n) ? n : NaN;
+      }
+
+      function parseBoolField(v) {
+        var s = String(v != null ? v : "")
+          .trim()
+          .toLowerCase();
+        if (s === "true" || s === "1" || s === "yes" || s === "t") return true;
+        if (s === "false" || s === "0" || s === "no" || s === "f" || s === "")
+          return false;
+        var n = Number(String(v).replace(",", ".").trim());
+        if (n === 1) return true;
+        if (n === 0 && String(v).trim() !== "") return false;
+        return false;
+      }
+
+      /* ---- 멀티 파일 병합 (헤더 합집합) ---- */
+
+      function linesFromText(t) {
+        return String(stripBom(t || ""))
+          .split(/\r?\n/)
+          .filter(function (l) {
+            return l.length > 0;
+          });
+      }
+
+      function buildCanonicalHeaderFromHeaders(partsHeaders) {
+        var seen = Object.create(null);
+        var out = [];
+        for (var p = 0; p < partsHeaders.length; p++) {
+          var hdr = partsHeaders[p];
+          if (!hdr || !hdr.length) continue;
+          for (var i = 0; i < hdr.length; i++) {
+            var nk = normHeader(hdr[i]);
+            if (!nk) continue;
+            if (seen[nk]) continue;
+            seen[nk] = true;
+            out.push(hdr[i]);
+          }
+        }
+        return out;
+      }
+
+      function headerNormToIndexMap(header) {
+        var m = Object.create(null);
+        for (var i = 0; i < header.length; i++) {
+          var nk = normHeader(header[i]);
+          if (nk && m[nk] === undefined) m[nk] = i;
+        }
+        return m;
+      }
+
+      function mapRowToCanonical(fileRow, fileHeaderNormMap, canonicalHeader) {
+        var out = [];
+        for (var c = 0; c < canonicalHeader.length; c++) {
+          var nk = normHeader(canonicalHeader[c]);
+          var j = fileHeaderNormMap[nk];
+          out.push(j !== undefined && j < fileRow.length ? fileRow[j] : "");
+        }
+        return out;
+      }
+
+      function mergeParts(parts) {
+        var headerList = [];
+        for (var p = 0; p < parts.length; p++) {
+          var lines = linesFromText(parts[p].text);
+          if (!lines.length) continue;
+          var hl = parseCsvLine(lines[0]);
+          if (hl.length) headerList.push(hl);
+        }
+        if (!headerList.length) return { header: [], rows: [], files: 0 };
+        var canonical = buildCanonicalHeaderFromHeaders(headerList);
+        var rows = [];
+        var mergedCount = 0;
+        for (var p2 = 0; p2 < parts.length; p2++) {
+          var lines2 = linesFromText(parts[p2].text);
+          if (!lines2.length) continue;
+          var hdr2 = parseCsvLine(lines2[0]);
+          if (!hdr2.length) continue;
+          var fileMap = headerNormToIndexMap(hdr2);
+          mergedCount++;
+          for (var r = 1; r < lines2.length; r++) {
+            var row = parseCsvLine(lines2[r]);
+            if (
+              row.every(function (c) {
+                return !String(c).trim();
+              })
+            )
+              continue;
+            rows.push(mapRowToCanonical(row, fileMap, canonical));
+          }
+        }
+        return { header: canonical, rows: rows, files: mergedCount };
+      }
+
+      /* ---- OAA 계산 (설정 가능한 격자/최소표본) ---- */
+
+      function buildIndices(header) {
+        return {
+          idxLx: colIndex(header, ["lx", "lX", "LX"]),
+          idxLz: colIndex(header, ["lz", "lZ", "LZ"]),
+          idxResult: colIndex(header, ["result", "Result", "RESULT", "타구결과"]),
+          idx1BSafe: colIndex(header, [
+            "1BSafe",
+            "1bsafe",
+            "is1BSafe",
+            "is1bsafe",
+            "firstBaseSafe",
+            "firstbasesafe",
+          ]),
+          idxCPos: colIndex(header, ["cPos", "cpos", "CPos", "fielderPos"]),
+          idxCPlr: colIndex(header, [
+            "cPlr",
+            "cplr",
+            "CPlr",
+            "fielder",
+            "cPlayer",
+          ]),
+          idxId: colIndex(header, ["id", "ID", "Id"]),
+        };
+      }
+
+      /* ---- URZ 폴라 존 (URZ.html의 빨간 격자) ----
+         홈(300,580) 기준: 파울선 사이(-135°~-45°)를 11.25°씩 8개 섹터로,
+         동심 반원 반지름(px)으로 8개 밴드로 분할. 좌표는 SVG px 공간. */
+      var URZ_SECTORS = 8;
+      var URZ_ANG_MIN = -135;
+      var URZ_ANG_STEP = 11.25;
+      var URZ_RADII = [60, 100, 140, 180, 240, 300, 374];
+      var URZ_BOUNDS = [0].concat(URZ_RADII).concat([Infinity]);
+      var URZ_OUTER_DRAW = 420;
+
+      function urzZoneFromSvg(sx, sy) {
+        var dx = sx - 300;
+        var dy = sy - 580;
+        var r = Math.sqrt(dx * dx + dy * dy);
+        var ang = (Math.atan2(dy, dx) * 180) / Math.PI;
+        if (ang < URZ_ANG_MIN || ang > -45) return null; // 파울/후방 제외
+        var sector = Math.floor((ang - URZ_ANG_MIN) / URZ_ANG_STEP);
+        if (sector < 0) sector = 0;
+        if (sector > URZ_SECTORS - 1) sector = URZ_SECTORS - 1;
+        var band = URZ_BOUNDS.length - 2;
+        for (var b = 0; b < URZ_BOUNDS.length - 1; b++) {
+          if (r >= URZ_BOUNDS[b] && r < URZ_BOUNDS[b + 1]) {
+            band = b;
+            break;
+          }
+        }
+        return sector + "-" + band;
+      }
+
+      function urzZone(lx, lz, t) {
+        var p = dataToSvg(lx, lz, t);
+        return urzZoneFromSvg(p[0], p[1]);
+      }
+
+      function rowDefOutMade(row, ix) {
+        if (ix.idxResult < 0 || ix.idx1BSafe < 0) return false;
+        var res = parseNum(row[ix.idxResult]);
+        if (!Number.isFinite(res)) return false;
+        var ri = Math.round(res);
+        if (ri !== 1 && ri !== 2) return false;
+        return !parseBoolField(row[ix.idx1BSafe]);
+      }
+
+      /* 기대값을 (포지션 × 존)으로 분리.
+         폴백: 존(표본≥minCell) → 그 포지션 전체 평균 → 리그 전체 평균 */
+      function buildGridExpectancy(rows, ix, minCell, t) {
+        var byPos = Object.create(null);
+        var leagueOuts = 0;
+        var leagueTotal = 0;
+        if (ix.idxLx < 0 || ix.idxLz < 0 || ix.idxCPos < 0)
+          return {
+            byPos: byPos,
+            global: 0,
+            leagueOuts: 0,
+            leagueTotal: 0,
+          };
+        for (var i = 0; i < rows.length; i++) {
+          var row = rows[i];
+          var lx = parseNum(row[ix.idxLx]);
+          var lz = parseNum(row[ix.idxLz]);
+          if (!Number.isFinite(lx) || !Number.isFinite(lz)) continue;
+          var key = urzZone(lx, lz, t);
+          if (key == null) continue; // 파울 등 존 밖
+          var pv = parseNum(row[ix.idxCPos]);
+          if (!Number.isFinite(pv)) continue; // 포지션 미상 = 처리 야수 없음
+          var pk = String(Math.round(pv));
+          if (!byPos[pk])
+            byPos[pk] = { cells: Object.create(null), outs: 0, total: 0 };
+          var p = byPos[pk];
+          if (!p.cells[key]) p.cells[key] = { outs: 0, total: 0 };
+          p.cells[key].total++;
+          p.total++;
+          leagueTotal++;
+          if (rowDefOutMade(row, ix)) {
+            p.cells[key].outs++;
+            p.outs++;
+            leagueOuts++;
+          }
+        }
+        var global = leagueTotal > 0 ? leagueOuts / leagueTotal : 0;
+        for (var posKey in byPos) {
+          if (!Object.prototype.hasOwnProperty.call(byPos, posKey)) continue;
+          var pp = byPos[posKey];
+          pp.posGlobal = pp.total > 0 ? pp.outs / pp.total : global;
+          for (var k in pp.cells) {
+            if (!Object.prototype.hasOwnProperty.call(pp.cells, k)) continue;
+            var c = pp.cells[k];
+            c.rawRate = c.total > 0 ? c.outs / c.total : 0;
+            if (c.total >= minCell) {
+              c.usedRate = c.rawRate;
+              c.level = "zone";
+            } else if (pp.total >= minCell) {
+              c.usedRate = pp.posGlobal;
+              c.level = "pos";
+            } else {
+              c.usedRate = global;
+              c.level = "league";
+            }
+            c.fallback = c.level !== "zone";
+          }
+        }
+        return {
+          byPos: byPos,
+          global: global,
+          leagueOuts: leagueOuts,
+          leagueTotal: leagueTotal,
+        };
+      }
+
+      function expectedRate(exp, posKey, zoneKey) {
+        var p = exp.byPos ? exp.byPos[posKey] : null;
+        if (p && p.cells[zoneKey]) return p.cells[zoneKey].usedRate;
+        if (p && p.total > 0) return p.posGlobal;
+        return exp.global;
+      }
+
+      function modeCPos(rows, ix, name) {
+        if (ix.idxCPlr < 0 || ix.idxCPos < 0 || !name) return NaN;
+        var counts = Object.create(null);
+        for (var i = 0; i < rows.length; i++) {
+          var row = rows[i];
+          if (
+            String(row[ix.idxCPlr] != null ? row[ix.idxCPlr] : "").trim() !==
+            name
+          )
+            continue;
+          var p = parseNum(row[ix.idxCPos]);
+          if (!Number.isFinite(p)) continue;
+          var pk = String(Math.round(p));
+          counts[pk] = (counts[pk] || 0) + 1;
+        }
+        var best = NaN;
+        var bestC = 0;
+        for (var k in counts) {
+          if (counts[k] > bestC) {
+            bestC = counts[k];
+            best = parseNum(k);
+          }
+        }
+        return best;
+      }
+
+      var POS_NAME = {
+        0: "P(투)",
+        1: "C(포)",
+        2: "1B",
+        3: "2B",
+        4: "3B",
+        5: "SS",
+        6: "LF",
+        7: "CF",
+        8: "RF",
+      };
+
+      function computeFielderOaa(rows, ix, name, exp, t) {
+        var cpos = modeCPos(rows, ix, name);
+        var details = [];
+        var sum = 0;
+        var outs = 0;
+        var expSum = 0;
+        if (!Number.isFinite(cpos))
+          return { cpos: cpos, n: 0, sum: 0, oaa: null, details: details };
+        var posKey = String(Math.round(cpos));
+        var posCells = exp.byPos && exp.byPos[posKey] ? exp.byPos[posKey].cells : null;
+        for (var i = 0; i < rows.length; i++) {
+          var row = rows[i];
+          if (
+            String(row[ix.idxCPlr] != null ? row[ix.idxCPlr] : "").trim() !==
+            name
+          )
+            continue;
+          var cp = parseNum(row[ix.idxCPos]);
+          if (!Number.isFinite(cp) || Math.round(cp) !== Math.round(cpos))
+            continue;
+          if (ix.idxLx < 0 || ix.idxLz < 0) continue;
+          var lx = parseNum(row[ix.idxLx]);
+          var lz = parseNum(row[ix.idxLz]);
+          if (!Number.isFinite(lx) || !Number.isFinite(lz)) continue;
+          var gk = urzZone(lx, lz, t);
+          if (gk == null) continue;
+          var e = expectedRate(exp, posKey, gk);
+          var actual = rowDefOutMade(row, ix) ? 1 : 0;
+          var contrib = actual - e;
+          sum += contrib;
+          outs += actual;
+          expSum += e;
+          var cell = posCells ? posCells[gk] : null;
+          details.push({
+            id: ix.idxId >= 0 ? row[ix.idxId] : "",
+            lx: lx,
+            lz: lz,
+            gk: gk,
+            cellN: cell ? cell.total : 0,
+            cellOuts: cell ? cell.outs : 0,
+            exp: e,
+            fallback: cell ? cell.fallback : true,
+            level: cell ? cell.level : "league",
+            result: ix.idxResult >= 0 ? row[ix.idxResult] : "",
+            safe: ix.idx1BSafe >= 0 ? row[ix.idx1BSafe] : "",
+            actual: actual,
+            contrib: contrib,
+            cum: sum,
+          });
+        }
+        var n = details.length;
+        return {
+          cpos: cpos,
+          posKey: posKey,
+          n: n,
+          sum: sum,
+          outs: outs,
+          expSum: expSum,
+          oaa: n > 0 ? (sum / n) * 100 : null,
+          details: details,
+        };
+      }
+
+      function collectFielders(rows, ix) {
+        var set = Object.create(null);
+        if (ix.idxCPlr < 0) return [];
+        for (var i = 0; i < rows.length; i++) {
+          var nm = String(
+            rows[i][ix.idxCPlr] != null ? rows[i][ix.idxCPlr] : ""
+          ).trim();
+          if (nm) set[nm] = true;
+        }
+        return Object.keys(set);
+      }
+
+      /* ---- UI ---- */
+
+      var state = {
+        header: [],
+        rows: [],
+        ix: null,
+        exp: null,
+        size: 8,
+        transform: null,
+        detail: null,
+        curPos: null,
+      };
+
+      // 홈플레이트 SVG (300,580). 가장 깊은 타구가 닿는 반경(=방사선 길이) 420px.
+      var FIELD = { ox: 300, oy: 580, w: 600, h: 620, topRadius: 420 };
+
+      /* 데이터 좌표 보정:
+         lz=홈(기본 -20)을 홈플레이트로, lz=최외곽(기본 -115)을 외야 끝(420px)으로.
+         lx는 lxCenter(기본 0)를 중앙선으로. x·y 동일 스케일. */
+      function buildTransform(rows, ix, homeLz, deepLz, lxCenter) {
+        var span = homeLz - deepLz; // 예: -20 - (-115) = 95
+        var S = span !== 0 ? FIELD.topRadius / span : 4.42;
+        if (!Number.isFinite(S) || S <= 0) S = 4.42;
+        return {
+          S: S,
+          ox: FIELD.ox,
+          oy: FIELD.oy,
+          lzHome: homeLz,
+          deepLz: deepLz,
+          lxCenter: lxCenter || 0,
+        };
+      }
+
+      function dataToSvg(lx, lz, t) {
+        return [
+          t.ox - (lx - t.lxCenter) * t.S,
+          t.oy + (lz - t.lzHome) * t.S,
+        ];
+      }
+
+      function lerp(a, b, t) {
+        return a + (b - a) * t;
+      }
+
+      function hex(n) {
+        var s = Math.max(0, Math.min(255, Math.round(n))).toString(16);
+        return s.length === 1 ? "0" + s : s;
+      }
+
+      // 0..1 → blue → cyan → amber → red
+      function rateColor(t) {
+        t = Math.max(0, Math.min(1, t));
+        var stops = [
+          [0.0, [37, 99, 235]],
+          [0.25, [34, 211, 238]],
+          [0.55, [234, 179, 8]],
+          [1.0, [239, 68, 68]],
+        ];
+        for (var i = 1; i < stops.length; i++) {
+          if (t <= stops[i][0]) {
+            var lo = stops[i - 1];
+            var hi = stops[i];
+            var f = (t - lo[0]) / (hi[0] - lo[0] || 1);
+            return (
+              "#" +
+              hex(lerp(lo[1][0], hi[1][0], f)) +
+              hex(lerp(lo[1][1], hi[1][1], f)) +
+              hex(lerp(lo[1][2], hi[1][2], f))
+            );
+          }
+        }
+        return "#ef4444";
+      }
+
+      function fmt(v, d) {
+        if (v == null || !Number.isFinite(v)) return "—";
+        return v.toFixed(d == null ? 3 : d);
+      }
+
+      function signed(v, d) {
+        if (v == null || !Number.isFinite(v)) return "—";
+        return (v >= 0 ? "+" : "") + v.toFixed(d == null ? 2 : d);
+      }
+
+      function clsNum(v) {
+        if (!Number.isFinite(v) || v === 0) return "";
+        return v > 0 ? "pos" : "neg";
+      }
+
+      function readFiles(fileList) {
+        var files = [];
+        for (var i = 0; i < fileList.length; i++) {
+          var f = fileList[i];
+          var n = (f.name || "").toLowerCase();
+          if (/\.(csv|txt)$/i.test(n) || n.indexOf(".") === -1) files.push(f);
+        }
+        if (!files.length) {
+          document.getElementById("load-info").textContent =
+            "CSV/TXT 파일을 찾지 못했습니다.";
+          return;
+        }
+        files.sort(function (a, b) {
+          return String(a.name || "").localeCompare(String(b.name || ""), "ko");
+        });
+        var parts = [];
+        var done = 0;
+        files.forEach(function (f) {
+          var reader = new FileReader();
+          reader.onload = function () {
+            parts.push({ name: f.name, text: String(reader.result || "") });
+            done++;
+            if (done === files.length) afterLoad(parts);
+          };
+          reader.onerror = function () {
+            done++;
+            if (done === files.length) afterLoad(parts);
+          };
+          reader.readAsText(f, "UTF-8");
+        });
+      }
+
+      function afterLoad(parts) {
+        var merged = mergeParts(parts);
+        state.header = merged.header;
+        state.rows = merged.rows;
+        state.ix = buildIndices(merged.header);
+        var ix = state.ix;
+        var missing = [];
+        if (ix.idxLx < 0 || ix.idxLz < 0) missing.push("lx/lz");
+        if (ix.idxResult < 0) missing.push("result");
+        if (ix.idx1BSafe < 0) missing.push("1BSafe");
+        if (ix.idxCPlr < 0) missing.push("cPlr");
+        if (ix.idxCPos < 0) missing.push("cPos");
+        var info =
+          "파일 " +
+          merged.files +
+          "개 · 데이터 " +
+          merged.rows.length +
+          "행 병합됨.";
+        if (missing.length)
+          info += "  ⚠ 누락 컬럼: " + missing.join(", ");
+        document.getElementById("load-info").textContent = info;
+        recompute();
+      }
+
+      function recompute() {
+        if (!state.rows.length) return;
+        var minCell = Math.max(
+          1,
+          Math.round(parseNum(document.getElementById("min-cell").value) || 5)
+        );
+        var ix = state.ix;
+        var rows = state.rows;
+
+        var t = buildTransform(
+          rows,
+          ix,
+          parseNum(document.getElementById("home-lz").value),
+          parseNum(document.getElementById("deep-lz").value),
+          parseNum(document.getElementById("center-lx").value)
+        );
+        var exp = buildGridExpectancy(rows, ix, minCell, t);
+
+        state.exp = exp;
+        state.transform = t;
+
+        document.getElementById("results").classList.remove("hidden");
+
+        document.getElementById("formula-box").textContent =
+          "존 = URZ 폴라 격자 (방사 " +
+          URZ_SECTORS +
+          "섹터 × 동심원 " +
+          (URZ_BOUNDS.length - 1) +
+          "밴드, 홈 기준)\n" +
+          "기댓값은 (포지션 × 존)별로 분리:\n" +
+          "  기댓값[포지션, 존] = (그 포지션이 그 존에서 잡은 아웃) / (그 포지션이 그 존에서 마주한 타구)\n" +
+          "  폴백: 존 표본<" +
+          minCell +
+          " → 그 포지션 전체 평균 → 리그 전체 평균(" +
+          fmt(exp.global, 4) +
+          ")\n" +
+          "타구 기여도 = 실제아웃(0/1) − 기댓값[그 선수 포지션, 존]\n" +
+          "OAA = ( Σ기여도 / 타구수 ) × 100   (기회당 %p)";
+
+        var ls = document.getElementById("league-stats");
+        var nPos = Object.keys(exp.byPos).length;
+        var nCells = 0;
+        var fallbackCells = 0;
+        for (var pk in exp.byPos) {
+          if (!Object.prototype.hasOwnProperty.call(exp.byPos, pk)) continue;
+          for (var k in exp.byPos[pk].cells) {
+            nCells++;
+            if (exp.byPos[pk].cells[k].fallback) fallbackCells++;
+          }
+        }
+        ls.innerHTML = "";
+        [
+          ["전체 타구 (존 내)", String(exp.leagueTotal)],
+          ["전체 아웃 처리", String(exp.leagueOuts)],
+          ["리그 평균 아웃률", fmt(exp.global * 100, 1) + "%"],
+          ["포지션 수", String(nPos)],
+          ["포지션×존 칸 수", String(nCells)],
+          ["표본부족(폴백) 칸", fallbackCells + " / " + nCells],
+        ].forEach(function (p) {
+          var d = document.createElement("div");
+          d.className = "stat";
+          d.innerHTML =
+            '<div class="k">' + p[0] + '</div><div class="v">' + p[1] + "</div>";
+          ls.appendChild(d);
+        });
+
+        var fielders = collectFielders(rows, ix);
+        var computed = fielders
+          .map(function (nm) {
+            return { name: nm, r: computeFielderOaa(rows, ix, nm, exp, t) };
+          })
+          .filter(function (x) {
+            return x.r.n > 0;
+          })
+          .sort(function (a, b) {
+            return (b.r.oaa || 0) - (a.r.oaa || 0);
+          });
+
+        var tb = document.querySelector("#fielder-table tbody");
+        tb.innerHTML = "";
+        computed.forEach(function (x) {
+          var tr = document.createElement("tr");
+          tr.style.cursor = "pointer";
+          tr.className =
+            x.r.oaa > 0 ? "row-good" : x.r.oaa < 0 ? "row-bad" : "";
+          var posLabel =
+            POS_NAME[Math.round(x.r.cpos)] || String(x.r.cpos);
+          tr.innerHTML =
+            '<td class="l">' +
+            escapeHtml(x.name) +
+            "</td><td>" +
+            posLabel +
+            "</td><td>" +
+            x.r.n +
+            "</td><td>" +
+            x.r.outs +
+            "</td><td>" +
+            fmt(x.r.expSum, 2) +
+            '</td><td class="' +
+            clsNum(x.r.sum) +
+            '">' +
+            signed(x.r.sum, 2) +
+            '</td><td class="' +
+            clsNum(x.r.oaa) +
+            '">' +
+            signed(x.r.oaa, 1) +
+            "%</td>";
+          tr.addEventListener("click", function () {
+            showDetail(x.name, x.r, posLabel);
+          });
+          tb.appendChild(tr);
+        });
+
+        if (computed.length) {
+          showDetail(
+            computed[0].name,
+            computed[0].r,
+            POS_NAME[Math.round(computed[0].r.cpos)] ||
+              String(computed[0].r.cpos)
+          );
+        } else {
+          state.curPos = null;
+          state.detail = null;
+          renderGrid();
+          renderField();
+        }
+      }
+
+      function defaultPosKey(exp) {
+        var best = null;
+        var bestN = -1;
+        for (var pk in exp.byPos) {
+          if (!Object.prototype.hasOwnProperty.call(exp.byPos, pk)) continue;
+          if (exp.byPos[pk].total > bestN) {
+            bestN = exp.byPos[pk].total;
+            best = pk;
+          }
+        }
+        return best;
+      }
+
+      function showDetail(name, r, posLabel) {
+        state.detail = r;
+        state.curPos = r.posKey;
+        renderGrid();
+        renderField();
+        document.getElementById("detail-title").textContent =
+          "선수 타구 상세 — " + name + " (" + posLabel + ")";
+        var ds = document.getElementById("detail-stats");
+        ds.innerHTML = "";
+        [
+          ["타구 수 (N)", String(r.n)],
+          ["실제 아웃", String(r.outs)],
+          ["기대 아웃 Σ", fmt(r.expSum, 2)],
+          ["OAA 합 (Σ기여도)", signed(r.sum, 2)],
+          ["OAA = 합/N×100", signed(r.oaa, 1) + "%"],
+        ].forEach(function (p) {
+          var d = document.createElement("div");
+          d.className = "stat";
+          d.innerHTML =
+            '<div class="k">' + p[0] + '</div><div class="v">' + p[1] + "</div>";
+          ds.appendChild(d);
+        });
+
+        var tb = document.querySelector("#detail-table tbody");
+        tb.innerHTML = "";
+        r.details.forEach(function (d, i) {
+          var tr = document.createElement("tr");
+          tr.className = d.actual ? "row-good" : "";
+          tr.innerHTML =
+            "<td>" +
+            (i + 1) +
+            '</td><td class="l">' +
+            escapeHtml(String(d.id)) +
+            "</td><td>" +
+            fmt(d.lx, 2) +
+            "</td><td>" +
+            fmt(d.lz, 2) +
+            '</td><td class="l">' +
+            d.gk +
+            "</td><td>" +
+            d.cellN +
+            "</td><td>" +
+            d.cellOuts +
+            "</td><td>" +
+            fmt(d.exp, 3) +
+            '</td><td class="l">' +
+            levelPill(d.level) +
+            "</td><td>" +
+            escapeHtml(String(d.result)) +
+            "</td><td>" +
+            escapeHtml(String(d.safe)) +
+            "</td><td>" +
+            d.actual +
+            '</td><td class="' +
+            clsNum(d.contrib) +
+            '">' +
+            signed(d.contrib, 3) +
+            '</td><td class="' +
+            clsNum(d.cum) +
+            '">' +
+            signed(d.cum, 3) +
+            "</td>";
+          tb.appendChild(tr);
+        });
+      }
+
+      function levelPill(level) {
+        if (level === "pos")
+          return '<span class="pill fallback">포지션평균</span>';
+        if (level === "league")
+          return '<span class="pill fallback">리그평균</span>';
+        return '<span class="pill">존</span>';
+      }
+
+      function currentPosCells() {
+        var exp = state.exp;
+        if (!exp || !exp.byPos) return { posKey: null, cells: {} };
+        var posKey = state.curPos || defaultPosKey(exp);
+        var p = posKey ? exp.byPos[posKey] : null;
+        return { posKey: posKey, cells: p ? p.cells : {} };
+      }
+
+      function renderGrid() {
+        var pc = currentPosCells();
+        var cells = pc.cells;
+        var posLabel =
+          pc.posKey != null
+            ? POS_NAME[Math.round(parseNum(pc.posKey))] || pc.posKey
+            : "—";
+        var head = document.getElementById("grid-card-title");
+        if (head) head.textContent = "URZ 존 기댓값 맵 — " + posLabel;
+        var keys = Object.keys(cells).sort(function (a, b) {
+          return cells[b].total - cells[a].total;
+        });
+        var tb = document.querySelector("#grid-table tbody");
+        tb.innerHTML = "";
+        keys.forEach(function (k) {
+          var c = cells[k];
+          var parts = k.split("-");
+          var sector = parseInt(parts[0], 10);
+          var band = parseInt(parts[1], 10);
+          var a0 = URZ_ANG_MIN + sector * URZ_ANG_STEP;
+          var a1 = a0 + URZ_ANG_STEP;
+          var r0 = URZ_BOUNDS[band];
+          var r1 = URZ_BOUNDS[band + 1];
+          var angTxt = a0.toFixed(1) + "° ~ " + a1.toFixed(1) + "°";
+          var radTxt = r0 + " ~ " + (isFinite(r1) ? r1 : "∞") + " px";
+          var tr = document.createElement("tr");
+          tr.innerHTML =
+            '<td class="l">' +
+            k +
+            '</td><td class="l">' +
+            angTxt +
+            '</td><td class="l">' +
+            radTxt +
+            "</td><td>" +
+            c.total +
+            "</td><td>" +
+            c.outs +
+            "</td><td>" +
+            fmt(c.rawRate, 3) +
+            "</td><td>" +
+            fmt(c.usedRate, 3) +
+            '</td><td class="l">' +
+            levelPill(c.level) +
+            "</td>";
+          tb.appendChild(tr);
+        });
+      }
+
+      function escapeHtml(s) {
+        return String(s)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
+      function svgEl(tag, attrs) {
+        var el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+        for (var k in attrs) el.setAttribute(k, attrs[k]);
+        return el;
+      }
+
+      function urzPointAt(angDeg, r) {
+        var a = (angDeg * Math.PI) / 180;
+        return [300 + r * Math.cos(a), 580 + r * Math.sin(a)];
+      }
+
+      function ptStr(p) {
+        return p[0].toFixed(2) + " " + p[1].toFixed(2);
+      }
+
+      function urzWedgePath(sector, band) {
+        var a0 = URZ_ANG_MIN + sector * URZ_ANG_STEP;
+        var a1 = a0 + URZ_ANG_STEP;
+        var r0 = URZ_BOUNDS[band];
+        var r1 = URZ_BOUNDS[band + 1];
+        if (!isFinite(r1)) r1 = URZ_OUTER_DRAW;
+        var p1 = urzPointAt(a0, r0);
+        var p2 = urzPointAt(a0, r1);
+        var p3 = urzPointAt(a1, r1);
+        var p4 = urzPointAt(a1, r0);
+        if (r0 <= 0.001) {
+          return (
+            "M 300 580 L " +
+            ptStr(p2) +
+            " A " +
+            r1 +
+            " " +
+            r1 +
+            " 0 0 1 " +
+            ptStr(p3) +
+            " Z"
+          );
+        }
+        return (
+          "M " +
+          ptStr(p1) +
+          " L " +
+          ptStr(p2) +
+          " A " +
+          r1 +
+          " " +
+          r1 +
+          " 0 0 1 " +
+          ptStr(p3) +
+          " L " +
+          ptStr(p4) +
+          " A " +
+          r0 +
+          " " +
+          r0 +
+          " 0 0 0 " +
+          ptStr(p1) +
+          " Z"
+        );
+      }
+
+      function urzCentroid(sector, band) {
+        var midA = URZ_ANG_MIN + (sector + 0.5) * URZ_ANG_STEP;
+        var r1 = URZ_BOUNDS[band + 1];
+        if (!isFinite(r1)) r1 = URZ_OUTER_DRAW;
+        var midR = (URZ_BOUNDS[band] + r1) / 2;
+        return urzPointAt(midA, midR);
+      }
+
+      function renderField() {
+        var exp = state.exp;
+        var t = state.transform;
+        if (!exp || !t) return;
+        var cellsG = document.getElementById("urz-cells");
+        var labelsG = document.getElementById("urz-labels");
+        cellsG.textContent = "";
+        labelsG.textContent = "";
+
+        var mode = document.getElementById("cell-mode").value;
+        var showCounts = document.getElementById("show-counts").checked;
+
+        var pc = currentPosCells();
+        var cells = pc.cells;
+        var posLabel =
+          pc.posKey != null
+            ? POS_NAME[Math.round(parseNum(pc.posKey))] || pc.posKey
+            : "—";
+
+        document.getElementById("legend-title").textContent =
+          (mode === "count" ? "존 색 = 표본 수" : "존 색 = 기댓 아웃률") +
+          " · " +
+          posLabel;
+        document.getElementById("legend-lo").textContent =
+          mode === "count" ? "0" : "0%";
+        document.getElementById("legend-hi").textContent =
+          mode === "count" ? "많음" : "100%";
+        document.getElementById("legend-mid").textContent =
+          mode === "count" ? "" : "50%";
+
+        var keys = Object.keys(cells);
+        var maxN = 1;
+        keys.forEach(function (k) {
+          if (cells[k].total > maxN) maxN = cells[k].total;
+        });
+
+        keys.forEach(function (k) {
+          var c = cells[k];
+          var parts = k.split("-");
+          var sector = parseInt(parts[0], 10);
+          var band = parseInt(parts[1], 10);
+          var tcol = mode === "count" ? c.total / maxN : c.usedRate;
+          var wedge = svgEl("path", {
+            d: urzWedgePath(sector, band),
+            fill: rateColor(tcol),
+            "fill-opacity": c.fallback && mode !== "count" ? 0.3 : 0.55,
+            stroke: "#0c1222",
+            "stroke-width": 0.3,
+            class: "urz-cell",
+          });
+          wedge.appendChild(svgEl("title", {})).textContent =
+            "존 " +
+            k +
+            " · 표본 " +
+            c.total +
+            " · 아웃 " +
+            c.outs +
+            " · 기댓값 " +
+            (c.usedRate * 100).toFixed(1) +
+            "% (" +
+            c.level +
+            ")";
+          cellsG.appendChild(wedge);
+
+          if (showCounts) {
+            var cen = urzCentroid(sector, band);
+            var lbl = svgEl("text", {
+              x: cen[0],
+              y: cen[1],
+              class: "urz-cell-label",
+            });
+            lbl.textContent = String(c.total);
+            labelsG.appendChild(lbl);
+          }
+        });
+
+        var info = document.getElementById("field-info");
+        info.textContent =
+          "홈 lz " +
+          t.lzHome +
+          " · 최외곽 " +
+          t.deepLz +
+          " · 스케일 " +
+          t.S.toFixed(2) +
+          " px/단위 · 표시 포지션 " +
+          posLabel +
+          " · 존 " +
+          keys.length +
+          "개";
+
+        renderDots();
+      }
+
+      function renderDots() {
+        var dotsG = document.getElementById("urz-dots");
+        dotsG.textContent = "";
+        if (!document.getElementById("show-dots").checked) return;
+        var d = state.detail;
+        var t = state.transform;
+        if (!d || !t) return;
+        d.details.forEach(function (b) {
+          var p = dataToSvg(b.lx, b.lz, t);
+          if (b.actual) {
+            dotsG.appendChild(
+              svgEl("circle", {
+                cx: p[0],
+                cy: p[1],
+                r: 3,
+                fill: "#f472b6",
+                stroke: "#0c1222",
+                "stroke-width": 0.6,
+              })
+            );
+          } else {
+            dotsG.appendChild(
+              svgEl("circle", {
+                cx: p[0],
+                cy: p[1],
+                r: 3,
+                fill: "none",
+                stroke: "#60a5fa",
+                "stroke-width": 1.2,
+              })
+            );
+          }
+        });
+      }
+
+      document
+        .getElementById("file-input")
+        .addEventListener("change", function (e) {
+          readFiles(e.target.files);
+        });
+      document
+        .getElementById("file-input-files")
+        .addEventListener("change", function (e) {
+          readFiles(e.target.files);
+        });
+      document
+        .getElementById("recompute")
+        .addEventListener("click", recompute);
+      document
+        .getElementById("cell-mode")
+        .addEventListener("change", renderField);
+      document
+        .getElementById("show-counts")
+        .addEventListener("change", renderField);
+      document
+        .getElementById("show-dots")
+        .addEventListener("change", renderDots);
+      ["home-lz", "deep-lz", "center-lx"].forEach(function (id) {
+        document.getElementById(id).addEventListener("change", function () {
+          if (state.rows.length) recompute();
+        });
+      });
+    </script>
+  </body>
+</html>

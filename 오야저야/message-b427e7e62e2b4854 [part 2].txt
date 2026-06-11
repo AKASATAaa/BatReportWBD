@@ -1,0 +1,361 @@
+==============================================================
+Guild: WBDA
+Channel: ⚾｜Scrimmage / 🗒️｜raw-data
+After: 2025-10-01 오전 12:00
+Before: 2026-04-12 오전 12:00
+==============================================================
+
+[2026-03-25 오후 7:17] snfl_
+
+
+{Attachments}
+message-0929c162af7bb772.txt
+
+{Reactions}
+✅
+
+[2026-03-25 오후 11:33] snfl_
+
+
+{Attachments}
+message-122658b0d0577b78.txt
+
+{Reactions}
+✅
+
+[2026-03-26 오후 6:54] kr_luna__
+
+
+{Attachments}
+message-3f2761d333fd05cc.txt
+
+{Reactions}
+✅
+
+[2026-03-26 오후 7:02] snfl_
+
+
+{Attachments}
+message-f6aa1430580653a9.txt
+
+{Reactions}
+🆗
+
+[2026-03-27 오후 7:05] kr_luna__
+
+
+{Attachments}
+message-358ca0d4252d5501.txt
+
+{Reactions}
+✅
+
+[2026-03-28 오후 11:29] byeolbam
+
+
+{Attachments}
+message-7c85cc37f1cb21b6.txt
+
+{Reactions}
+✅
+
+[2026-03-29 오후 7:00] sunsuny_
+
+
+{Attachments}
+message-bf497a13ca4d49b6.txt
+
+{Reactions}
+✅
+
+[2026-03-29 오후 7:00] kimpring
+
+
+{Attachments}
+message-d5d7f237c6daa742.txt
+
+{Reactions}
+🆗
+
+[2026-03-29 오후 7:00] kr_luna__
+
+
+{Attachments}
+message-686bc8aa07d0eae1.txt
+
+{Reactions}
+🆗
+
+[2026-03-29 오후 11:30] byeolbam
+
+
+{Attachments}
+message-df31d46bfdc49034.txt
+
+{Reactions}
+✅
+
+[2026-03-30 오후 7:02] snfl_
+
+
+{Attachments}
+message-6003e0a2d29c07ee.txt
+
+{Reactions}
+✅
+
+[2026-03-30 오후 11:33] snfl_
+
+
+{Attachments}
+message-22cc2730122dba69.txt
+
+{Reactions}
+✅
+
+[2026-03-31 오후 6:58] kr_luna__
+
+
+{Attachments}
+message-a4499ded5677e09e.txt
+
+{Reactions}
+✅
+
+[2026-03-31 오후 7:04] kimpring
+
+
+{Attachments}
+message-c4997f751c3f08f6.txt
+
+{Reactions}
+🆗
+
+[2026-04-01 오후 6:58] kr_luna__
+
+
+{Attachments}
+message-72887b8c8d87134a.txt
+
+{Reactions}
+✅
+
+[2026-04-01 오후 7:00] kimpring
+
+
+{Attachments}
+message-ab445d20d948bd5a.txt
+
+{Reactions}
+🆗
+
+[2026-04-01 오후 11:22] kr_luna__
+
+
+{Attachments}
+message-4f9bb47033db87a7.txt
+
+{Reactions}
+✅
+
+[2026-04-01 오후 11:27] kimpring
+
+
+{Attachments}
+message-df25da5891c55851.txt
+
+{Reactions}
+🆗
+
+[2026-04-02 오후 7:03] byeolbam
+
+
+{Attachments}
+message-c717e8c63d2e0005.txt
+
+{Reactions}
+✅
+
+[2026-04-02 오후 7:05] kr_luna__
+
+
+{Attachments}
+message-b641b613b04d59e1.txt
+
+{Reactions}
+🆗
+
+[2026-04-04 오전 3:44] rahuy
+
+
+{Attachments}
+message-222c5ac2e280919c.txt
+
+{Reactions}
+⚠️
+
+[2026-04-05 오전 2:36] kr_luna__
+
+
+{Attachments}
+message-96b1999d7ed58be8.txt
+
+{Reactions}
+⚠️
+
+[2026-04-05 오후 7:00] byeolbam
+
+
+{Attachments}
+message-0c280dbc5421d26f.txt
+
+{Reactions}
+✅
+
+[2026-04-05 오후 8:05] sunsuny_
+
+
+{Attachments}
+message-6fbd223e1283de94.txt
+
+{Reactions}
+🆗
+
+[2026-04-05 오후 11:24] kr_luna__
+
+
+{Attachments}
+message-e4faf183c6ba7893.txt
+
+{Reactions}
+✅
+
+[2026-04-06 오후 7:03] kimpring
+
+
+{Attachments}
+message-eee354e4b0565145.txt
+
+{Reactions}
+✅
+
+[2026-04-06 오후 11:20] kr_luna__
+
+
+{Attachments}
+message-96e6142bb819bc7e.txt
+
+{Reactions}
+✅
+
+[2026-04-06 오후 11:27] multeinn
+
+
+{Attachments}
+message-a0c120741af3da23.txt
+
+{Reactions}
+🆗
+
+[2026-04-07 오후 7:05] kimpring
+
+
+{Attachments}
+message-856c13a339888c37.txt
+
+{Reactions}
+✅
+
+[2026-04-07 오후 11:22] kr_luna__
+
+
+{Attachments}
+message-2347c5a789695c05.txt
+
+{Reactions}
+✅
+
+[2026-04-08 오후 6:49] kimpring
+
+
+{Attachments}
+message-3c639b89d30bf664.txt
+
+{Reactions}
+✅
+
+[2026-04-08 오후 7:00] snfl_
+1,2이닝 유실
+
+{Attachments}
+message-65dcf58a4de6c76d.txt
+
+{Reactions}
+🆗
+
+[2026-04-08 오후 11:25] multeinn
+
+
+{Attachments}
+message-1aede8167d0dcf67.txt
+
+{Reactions}
+✅
+
+[2026-04-09 오후 12:31] yuuumei
+EN 4/8
+
+{Attachments}
+message-f9837cb50ee97364.txt
+
+{Reactions}
+⚠️
+
+[2026-04-09 오후 11:28] sunsuny_
+
+
+{Attachments}
+message-8f2726930a341a9f.txt
+
+{Reactions}
+✅
+
+[2026-04-10 오후 11:37] aris29
+
+
+{Attachments}
+message-e762d12a973e22c7.txt
+
+{Reactions}
+✅
+
+[2026-04-11 오전 2:58] kr_luna__
+더블
+
+{Attachments}
+message-b97946b40d43c65a.txt
+
+{Reactions}
+⚠️
+
+[2026-04-11 오후 7:03] kr_luna__
+
+
+{Attachments}
+message-6ab91be0ff3e947c.txt
+
+{Reactions}
+✅
+
+[2026-04-11 오후 7:08] byeolbam
+
+
+{Attachments}
+message-f1bfef2daad6de55.txt
+
+{Reactions}
+🆗
+
+==============================================================
+Exported 39 message(s)
+==============================================================
