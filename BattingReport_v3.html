@@ -1064,7 +1064,6 @@
             id="batter-header-photo"
             src="https://images.vrcbaseball.com/pfp/146.png"
             alt="타자 프로필"
-            crossorigin="anonymous"
             decoding="async"
           />
         </div>
@@ -2248,7 +2247,7 @@
           var key = normalizePfpKey(displayName);
           if (pfpNameToIndexMap === null) {
             img.classList.remove("is-pfp-missing");
-            img.crossOrigin = "anonymous";
+            img.removeAttribute("crossorigin");
             img.src = PFP_DEFAULT_URL;
             return;
           }
@@ -2256,7 +2255,7 @@
           if (idx != null && String(idx).length) {
             img.classList.remove("is-pfp-missing");
             var url = PFP_BASE_URL + String(idx).trim() + ".png";
-            img.crossOrigin = "anonymous";
+            img.removeAttribute("crossorigin");
             img.src = url;
             return;
           }

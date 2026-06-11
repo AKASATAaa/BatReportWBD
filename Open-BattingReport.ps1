@@ -33,7 +33,7 @@ if ($srv.HasExited) {
   exit 1
 }
 
-$url = "http://127.0.0.1:$port/BattingReport.html"
+$url = "http://127.0.0.1:$port/BattingReport_v3.html"
 $userData = Join-Path $env:TEMP ("BattingReportApp_" + [Guid]::NewGuid().ToString("N"))
 
 $edge = @(

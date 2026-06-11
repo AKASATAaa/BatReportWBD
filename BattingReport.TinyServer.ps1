@@ -48,7 +48,7 @@ while ($listener.IsListening) {
   try {
     $path = [Uri]::UnescapeDataString($req.Url.AbsolutePath)
     if ([string]::IsNullOrWhiteSpace($path) -or $path -eq "/") {
-      $rel = "BattingReport.html"
+      $rel = "BattingReport_v3.html"
     } else {
       $rel = $path.TrimStart("/").Replace("/", [string][IO.Path]::DirectorySeparatorChar)
     }
