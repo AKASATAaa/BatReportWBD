@@ -5688,6 +5688,33 @@
           });
         }
 
+        function decodeIndexCsvBytes(buf) {
+          var bytes = new Uint8Array(buf);
+          var utf8 = new TextDecoder("utf-8").decode(bytes);
+          var bestText = utf8;
+          var bestCount = countPfpMapEntries(parseIndexCsvMapping(utf8));
+          if (typeof TextDecoder !== "undefined") {
+            try {
+              var legacy = new TextDecoder("windows-949").decode(bytes);
+              var legacyCount = countPfpMapEntries(parseIndexCsvMapping(legacy));
+              if (legacyCount > bestCount) {
+                bestText = legacy;
+                bestCount = legacyCount;
+              }
+            } catch (eLegacy) {}
+          }
+          return bestText;
+        }
+
+        function fetchIndexCsvText(url) {
+          return fetch(url)
+            .then(function (r) {
+              if (!r.ok) throw new Error(String(r.status));
+              return r.arrayBuffer();
+            })
+            .then(decodeIndexCsvBytes);
+        }
+
         function isKnownSourceId(id) {
           return sourceIds.indexOf(id) >= 0;
         }
@@ -5909,7 +5936,7 @@
             t("nameMergeSuffix");
 
           var indexName = sourcesConfigCache.indexCsv || "Index.csv";
-          var indexPromise = fetchTextUrl(resolveDataUrl(indexName)).catch(
+          var indexPromise = fetchIndexCsvText(resolveDataUrl(indexName)).catch(
             function () {
               return null;
             }
