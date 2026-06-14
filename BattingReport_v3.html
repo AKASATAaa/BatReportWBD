@@ -231,6 +231,62 @@
       .batter-stats-table tbody tr:last-child td {
         border-bottom: none;
       }
+      .row--avg-tables {
+        display: grid;
+        grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr);
+        gap: 20px;
+        padding: 14px 16px 16px;
+        border-top: 1px solid #e2e8f0;
+        align-items: start;
+      }
+      .avg-table-cell {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      .count-avg-title {
+        font-size: 28px;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1;
+        margin-bottom: 10px;
+      }
+      .count-avg-title span {
+        display: block;
+        font-size: 10px;
+        font-weight: 600;
+        color: #64748b;
+        margin-top: 4px;
+        letter-spacing: 0.04em;
+      }
+      .count-avg-table thead th {
+        vertical-align: top;
+        white-space: normal;
+      }
+      .count-avg-table .ca-head-label {
+        display: block;
+        font-weight: 700;
+      }
+      .count-avg-table .ca-head-counts {
+        display: block;
+        margin-top: 3px;
+        font-size: 9px;
+        font-weight: 500;
+        color: #94a3b8;
+        letter-spacing: 0.02em;
+      }
+      .count-avg-table tbody tr.count-avg-total th,
+      .count-avg-table tbody tr.count-avg-total td {
+        font-weight: 800;
+        color: #0f172a;
+        background: #f8fafc;
+        border-top: 2px solid #cbd5e1;
+      }
+      .count-avg-table tbody td.count-avg-all {
+        font-weight: 700;
+        color: #0f172a;
+        background: #f8fafc;
+      }
       .row--player-metrics {
         padding: 16px 24px 20px;
         background: #fff;
@@ -773,12 +829,55 @@
         min-height: 0;
         position: relative;
       }
+      .row--spray-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        grid-template-rows: auto 400px;
+        gap: 0;
+        padding: 0;
+        border-top: 1px solid #e2e8f0;
+      }
+      .spray-grid-cell {
+        padding: 8px 6px 10px;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        height: 400px;
+        box-sizing: border-box;
+        border-right: 1px solid #e2e8f0;
+      }
+      .spray-grid-cell:last-child {
+        border-right: none;
+      }
+      .spray-grid-wrap {
+        flex: 1;
+        min-height: 0;
+        position: relative;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        background: #f8fafc;
+      }
+      .spray-grid-wrap .spray-slot-canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      .zone-grid-title {
+        text-align: center;
+        font-size: 10px;
+        font-weight: 700;
+        color: #64748b;
+        margin-bottom: 4px;
+        flex-shrink: 0;
+        line-height: 1.3;
+      }
       .row--zone-grid {
         display: grid;
         grid-template-columns: repeat(6, 1fr);
         grid-template-rows: auto 550px;
         gap: 0;
         padding: 0;
+        border-top: 1px solid #e2e8f0;
       }
       .zone-grid-cell {
         padding: 8px 10px 12px;
@@ -787,6 +886,10 @@
         min-width: 0;
         height: 550px;
         box-sizing: border-box;
+        border-right: 1px solid #e2e8f0;
+      }
+      .zone-grid-cell:last-child {
+        border-right: none;
       }
       .row--zone-grid .chart-box {
         flex: 1;
@@ -1232,6 +1335,36 @@
         </div>
       </section>
 
+      <!-- Row: 카운트별 타율 + 주자상황별 타율 (2열) -->
+      <section class="row row--avg-tables" aria-label="타율 분석 표">
+        <div class="avg-table-cell" id="section-count-avg" aria-label="카운트별 타율">
+          <div class="count-avg-title">
+            <span id="i18n-count-avg-title">카운트별 타율</span>
+            <span id="i18n-count-avg-sub">구종 · 카운트 구간별 (타율)</span>
+          </div>
+          <div class="stats-table-wrap">
+            <table class="batter-stats-table count-avg-table">
+              <thead id="count-avg-thead"></thead>
+              <tbody id="count-avg-tbody"></tbody>
+            </table>
+          </div>
+          <div class="fp-note" id="count-avg-note" hidden></div>
+        </div>
+        <div class="avg-table-cell" id="section-runner-avg" aria-label="주자상황별 타율">
+          <div class="count-avg-title">
+            <span id="i18n-runner-avg-title">주자상황별 타율</span>
+            <span id="i18n-runner-avg-sub">주자 · 아웃카운트별 (타율)</span>
+          </div>
+          <div class="stats-table-wrap">
+            <table class="batter-stats-table count-avg-table">
+              <thead id="runner-avg-thead"></thead>
+              <tbody id="runner-avg-tbody"></tbody>
+            </table>
+          </div>
+          <div class="fp-note" id="runner-avg-note" hidden></div>
+        </div>
+      </section>
+
       <!-- Row 통합: SDEG · LDEG · PitchZone · HotCold (1×4) -->
       <section class="row row--four-panel" aria-label="타구 경향 및 존">
         <div class="fp-cell">
@@ -1276,6 +1409,138 @@
           <div class="fp-title"><span id="i18n-title-hot-cold">Hot &amp; Cold Zone</span><span>전체 구종 통합</span></div>
           <div class="fp-zone-box">
             <canvas id="heatmap-canvas" width="560" height="520"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- Row: 구종별 스프레이 차트 (A~F) -->
+      <section class="row row--spray-grid" aria-label="구종별 스프레이 차트" id="section-spray-pitch">
+        <div class="quad-section-title">
+          <span id="i18n-sec-spray-pitch-main">구종별 스프레이 차트</span>
+          <span id="i18n-sec-spray-pitch-sub">인플레이</span>
+        </div>
+        <div class="spray-grid-cell" data-slot="0">
+          <div class="zone-grid-title">패스트볼 (A)</div>
+          <div class="spray-grid-wrap">
+            <canvas class="spray-slot-canvas" id="spray-slot-canvas-0" width="400" height="320"></canvas>
+          </div>
+        </div>
+        <div class="spray-grid-cell" data-slot="1">
+          <div class="zone-grid-title">스플리터 (B)</div>
+          <div class="spray-grid-wrap">
+            <canvas class="spray-slot-canvas" id="spray-slot-canvas-1" width="400" height="320"></canvas>
+          </div>
+        </div>
+        <div class="spray-grid-cell" data-slot="2">
+          <div class="zone-grid-title">슬라이더 (라이징슬라이더 포함) (C)</div>
+          <div class="spray-grid-wrap">
+            <canvas class="spray-slot-canvas" id="spray-slot-canvas-2" width="400" height="320"></canvas>
+          </div>
+        </div>
+        <div class="spray-grid-cell" data-slot="3">
+          <div class="zone-grid-title">커브 (D)</div>
+          <div class="spray-grid-wrap">
+            <canvas class="spray-slot-canvas" id="spray-slot-canvas-3" width="400" height="320"></canvas>
+          </div>
+        </div>
+        <div class="spray-grid-cell" data-slot="4">
+          <div class="zone-grid-title">싱커 (라이징싱커 포함) (E)</div>
+          <div class="spray-grid-wrap">
+            <canvas class="spray-slot-canvas" id="spray-slot-canvas-4" width="400" height="320"></canvas>
+          </div>
+        </div>
+        <div class="spray-grid-cell" data-slot="5">
+          <div class="zone-grid-title">스크류볼 (F)</div>
+          <div class="spray-grid-wrap">
+            <canvas class="spray-slot-canvas" id="spray-slot-canvas-5" width="400" height="320"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- Row: 구종군별 Pitch Zone (A~F) -->
+      <section class="row row--zone-grid" aria-label="구종군별 타격 존" id="section-zone-pitch">
+        <div class="quad-section-title">
+          <span id="i18n-sec-zone-pitch-main">Pitch Zone</span>
+          <span id="i18n-sec-zone-pitch-sub">구종군별</span>
+        </div>
+        <div class="zone-grid-cell" data-slot="0">
+          <div class="zone-grid-title">패스트볼 (A)</div>
+          <div class="chart-box">
+            <canvas class="zone-grid-canvas" id="zone-slot-canvas-0" width="320" height="480"></canvas>
+          </div>
+        </div>
+        <div class="zone-grid-cell" data-slot="1">
+          <div class="zone-grid-title">스플리터 (B)</div>
+          <div class="chart-box">
+            <canvas class="zone-grid-canvas" id="zone-slot-canvas-1" width="320" height="480"></canvas>
+          </div>
+        </div>
+        <div class="zone-grid-cell" data-slot="2">
+          <div class="zone-grid-title">슬라이더 (라이징슬라이더 포함) (C)</div>
+          <div class="chart-box">
+            <canvas class="zone-grid-canvas" id="zone-slot-canvas-2" width="320" height="480"></canvas>
+          </div>
+        </div>
+        <div class="zone-grid-cell" data-slot="3">
+          <div class="zone-grid-title">커브 (D)</div>
+          <div class="chart-box">
+            <canvas class="zone-grid-canvas" id="zone-slot-canvas-3" width="320" height="480"></canvas>
+          </div>
+        </div>
+        <div class="zone-grid-cell" data-slot="4">
+          <div class="zone-grid-title">싱커 (라이징싱커 포함) (E)</div>
+          <div class="chart-box">
+            <canvas class="zone-grid-canvas" id="zone-slot-canvas-4" width="320" height="480"></canvas>
+          </div>
+        </div>
+        <div class="zone-grid-cell" data-slot="5">
+          <div class="zone-grid-title">스크류볼 (F)</div>
+          <div class="chart-box">
+            <canvas class="zone-grid-canvas" id="zone-slot-canvas-5" width="320" height="480"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- Row: 구종군별 Hot & Cold Zone (A~F) -->
+      <section class="row row--zone-grid" aria-label="구종군별 타율 존" id="section-zone-av">
+        <div class="quad-section-title">
+          <span id="i18n-sec-zone-av-main">Hot &amp; Cold Zone</span>
+          <span id="i18n-sec-zone-av-sub">구종군별</span>
+        </div>
+        <div class="zone-grid-cell" data-slot="0">
+          <div class="zone-grid-title">패스트볼 (A)</div>
+          <div class="chart-box">
+            <canvas class="zone-grid-canvas" id="heatmap-slot-canvas-0" width="320" height="480"></canvas>
+          </div>
+        </div>
+        <div class="zone-grid-cell" data-slot="1">
+          <div class="zone-grid-title">스플리터 (B)</div>
+          <div class="chart-box">
+            <canvas class="zone-grid-canvas" id="heatmap-slot-canvas-1" width="320" height="480"></canvas>
+          </div>
+        </div>
+        <div class="zone-grid-cell" data-slot="2">
+          <div class="zone-grid-title">슬라이더 (라이징슬라이더 포함) (C)</div>
+          <div class="chart-box">
+            <canvas class="zone-grid-canvas" id="heatmap-slot-canvas-2" width="320" height="480"></canvas>
+          </div>
+        </div>
+        <div class="zone-grid-cell" data-slot="3">
+          <div class="zone-grid-title">커브 (D)</div>
+          <div class="chart-box">
+            <canvas class="zone-grid-canvas" id="heatmap-slot-canvas-3" width="320" height="480"></canvas>
+          </div>
+        </div>
+        <div class="zone-grid-cell" data-slot="4">
+          <div class="zone-grid-title">싱커 (라이징싱커 포함) (E)</div>
+          <div class="chart-box">
+            <canvas class="zone-grid-canvas" id="heatmap-slot-canvas-4" width="320" height="480"></canvas>
+          </div>
+        </div>
+        <div class="zone-grid-cell" data-slot="5">
+          <div class="zone-grid-title">스크류볼 (F)</div>
+          <div class="chart-box">
+            <canvas class="zone-grid-canvas" id="heatmap-slot-canvas-5" width="320" height="480"></canvas>
           </div>
         </div>
       </section>
@@ -1337,6 +1602,36 @@
             batCenter: "배트 센터",
             titlePitchZone: "Pitch Zone",
             titleHotCold: "Hot & Cold Zone",
+            caTitle: "카운트별 타율",
+            caSub: "구종 · 카운트 구간별 (타율)",
+            caPitch: "구종",
+            caAll: "모든카운트",
+            caEarly: "초기카운트",
+            caAhead: "투수우세",
+            caBehind: "투수열세",
+            caPre2: "스트라이크 2 전",
+            caTwo: "스트라이크 2",
+            caTotal: "전체",
+            caNoCount: "ball/strk 열이 없어 카운트 구간을 계산할 수 없습니다.",
+            secCountAvg: "카운트별 타율",
+            rsTitle: "주자상황별 타율",
+            rsSub: "주자 · 아웃카운트별 (타율)",
+            rsSituation: "주자상황별",
+            rsOut0: "0아웃",
+            rsOut1: "1아웃",
+            rsOut2: "2아웃",
+            rsAll: "전체",
+            rsBasesEmpty: "없음",
+            rsB1: "1루",
+            rsB2: "2루",
+            rsB3: "3루",
+            rsB12: "1, 2루",
+            rsB13: "1, 3루",
+            rsB23: "2, 3루",
+            rsLoaded: "만루",
+            rsTotal: "전체",
+            rsNoData: "out/b1/b2/b3 열이 없어 주자상황을 계산할 수 없습니다.",
+            secRunnerAvg: "주자상황별 타율",
             tendencyOverall: "전체",
             tendencyByPitch: "구종별",
             tendencyEmpty: "데이터 없음",
@@ -1366,6 +1661,8 @@
             secStats: "스텟",
             secLegend: "스텟 표 열 설명",
             secSpray: "스프레이 차트",
+            secSprayPitch: "구종별 스프레이 차트",
+            secZonePitchSub: "구종군별",
             secLdeg: "타구 상하각 구종별",
             secSdeg: "타구 좌우각 구종별",
             secZonePitch: "구종군별 타격 존",
@@ -1479,6 +1776,36 @@
             batCenter: "Bat center",
             titlePitchZone: "Pitch zone",
             titleHotCold: "Hot & cold zone",
+            caTitle: "AVG by count",
+            caSub: "Batting average by pitch & count group",
+            caPitch: "Pitch",
+            caAll: "All counts",
+            caEarly: "Early",
+            caAhead: "Pitcher ahead",
+            caBehind: "Pitcher behind",
+            caPre2: "Before 2 strikes",
+            caTwo: "2 strikes",
+            caTotal: "Total",
+            caNoCount: "No ball/strk columns — count groups unavailable.",
+            secCountAvg: "AVG by count",
+            rsTitle: "AVG by base state",
+            rsSub: "Batting average by runners & outs",
+            rsSituation: "Runners",
+            rsOut0: "0 out",
+            rsOut1: "1 out",
+            rsOut2: "2 out",
+            rsAll: "All",
+            rsBasesEmpty: "Empty",
+            rsB1: "1B",
+            rsB2: "2B",
+            rsB3: "3B",
+            rsB12: "1B, 2B",
+            rsB13: "1B, 3B",
+            rsB23: "2B, 3B",
+            rsLoaded: "Loaded",
+            rsTotal: "Total",
+            rsNoData: "No out/b1/b2/b3 columns — base states unavailable.",
+            secRunnerAvg: "AVG by base state",
             tendencyOverall: "Overall",
             tendencyByPitch: "By pitch type",
             tendencyEmpty: "No data",
@@ -1508,6 +1835,8 @@
             secStats: "Stats",
             secLegend: "Stat columns",
             secSpray: "Spray chart",
+            secSprayPitch: "Spray chart by pitch group",
+            secZonePitchSub: "By pitch group",
             secLdeg: "Launch angle by pitch group",
             secSdeg: "Spray angle by pitch group",
             secZonePitch: "Zones by pitch group",
@@ -1621,6 +1950,36 @@
             batCenter: "バットセンター",
             titlePitchZone: "ピッチゾーン",
             titleHotCold: "ホット＆冷ゾーン",
+            caTitle: "カウント別打率",
+            caSub: "球種・カウント区分別（打率）",
+            caPitch: "球種",
+            caAll: "全カウント",
+            caEarly: "序盤カウント",
+            caAhead: "投手有利",
+            caBehind: "投手不利",
+            caPre2: "2ストライク前",
+            caTwo: "2ストライク",
+            caTotal: "全体",
+            caNoCount: "ball/strk 列がないためカウント区分を計算できません。",
+            secCountAvg: "カウント別打率",
+            rsTitle: "走者状況別打率",
+            rsSub: "走者・アウトカウント別（打率）",
+            rsSituation: "走者状況",
+            rsOut0: "0アウト",
+            rsOut1: "1アウト",
+            rsOut2: "2アウト",
+            rsAll: "全体",
+            rsBasesEmpty: "なし",
+            rsB1: "一塁",
+            rsB2: "二塁",
+            rsB3: "三塁",
+            rsB12: "一・二塁",
+            rsB13: "一・三塁",
+            rsB23: "二・三塁",
+            rsLoaded: "満塁",
+            rsTotal: "全体",
+            rsNoData: "out/b1/b2/b3 列がないため走者状況を計算できません。",
+            secRunnerAvg: "走者状況別打率",
             tendencyOverall: "全体",
             tendencyByPitch: "球種別",
             tendencyEmpty: "データなし",
@@ -1650,6 +2009,8 @@
             secStats: "スタッツ",
             secLegend: "スタッツ列説明",
             secSpray: "スプレーチャート",
+            secSprayPitch: "球種別スプレーチャート",
+            secZonePitchSub: "球種グループ別",
             secLdeg: "飛球上下角（球種別）",
             secSdeg: "飛球左右角（球種別）",
             secZonePitch: "球種グループ別ゾーン",
@@ -1805,6 +2166,18 @@
           if (el) el.textContent = t("titlePitchZone");
           el = document.getElementById("i18n-title-hot-cold");
           if (el) el.textContent = t("titleHotCold");
+          el = document.getElementById("i18n-count-avg-title");
+          if (el) el.textContent = t("caTitle");
+          el = document.getElementById("i18n-count-avg-sub");
+          if (el) el.textContent = t("caSub");
+          el = document.getElementById("section-count-avg");
+          if (el) el.setAttribute("aria-label", t("secCountAvg"));
+          el = document.getElementById("i18n-runner-avg-title");
+          if (el) el.textContent = t("rsTitle");
+          el = document.getElementById("i18n-runner-avg-sub");
+          if (el) el.textContent = t("rsSub");
+          el = document.getElementById("section-runner-avg");
+          if (el) el.setAttribute("aria-label", t("secRunnerAvg"));
           el = document.getElementById("i18n-tendency-by-pitch-sdeg");
           if (el) el.textContent = t("tendencyByPitch");
           el = document.getElementById("i18n-tendency-by-pitch-ldeg");
@@ -1826,6 +2199,20 @@
           if (el) el.textContent = t("statsHeading");
           el = document.querySelector(".row--spray");
           if (el) el.setAttribute("aria-label", t("secSpray"));
+          el = document.getElementById("section-spray-pitch");
+          if (el) el.setAttribute("aria-label", t("secSprayPitch"));
+          el = document.getElementById("i18n-sec-spray-pitch-main");
+          if (el) el.textContent = t("secSprayPitch");
+          el = document.getElementById("i18n-sec-spray-pitch-sub");
+          if (el) el.textContent = t("fpInPlayNote");
+          el = document.getElementById("i18n-sec-zone-pitch-main");
+          if (el) el.textContent = t("titlePitchZone");
+          el = document.getElementById("i18n-sec-zone-pitch-sub");
+          if (el) el.textContent = t("secZonePitchSub");
+          el = document.getElementById("i18n-sec-zone-av-main");
+          if (el) el.textContent = t("titleHotCold");
+          el = document.getElementById("i18n-sec-zone-av-sub");
+          if (el) el.textContent = t("secZonePitchSub");
           el = document.querySelector(".row--quad-rose");
           if (el) el.setAttribute("aria-label", t("secLdeg"));
           el = document.querySelector(".row--quad-rose-spray");
@@ -2302,6 +2689,22 @@
               x.setTransform(1, 0, 0, 1, 0, 0);
               x.clearRect(0, 0, c.width, c.height);
               x.restore();
+            }
+          }
+          var slotPrefixes = [
+            "spray-slot-canvas-",
+            "zone-slot-canvas-",
+            "heatmap-slot-canvas-",
+          ];
+          for (var sp = 0; sp < slotPrefixes.length; sp++) {
+            for (var ss = 0; ss < 6; ss++) {
+              var sc = document.getElementById(slotPrefixes[sp] + ss);
+              if (!sc || !sc.getContext) continue;
+              var sx = sc.getContext("2d");
+              sx.save();
+              sx.setTransform(1, 0, 0, 1, 0, 0);
+              sx.clearRect(0, 0, sc.width, sc.height);
+              sx.restore();
             }
           }
         }
@@ -3799,6 +4202,265 @@
           }
         }
 
+        /**
+         * 카운트별 타율: 구종(패밀리) × 카운트 구간.
+         * 카운트 표기는 볼-스트라이크(ball-strk). 분모/분자는 메인 스텟 표 AVG와 동일.
+         * 구간 정의는 사용자 지정 목록(서로 겹칠 수 있음).
+         */
+        var COUNT_AVG_GROUPS = [
+          { key: "caAll", cls: "count-avg-all", counts: null },
+          { key: "caEarly", cls: "", counts: ["0-0", "0-1", "1-0"] },
+          { key: "caAhead", cls: "", counts: ["0-1", "0-2", "1-2", "2-2"] },
+          {
+            key: "caBehind",
+            cls: "",
+            counts: ["1-0", "2-0", "3-0", "2-1", "3-1"],
+          },
+          {
+            key: "caPre2",
+            cls: "",
+            counts: ["0-0", "0-1", "1-0", "1-1", "2-1", "3-1"],
+          },
+          { key: "caTwo", cls: "", counts: ["0-2", "1-2", "2-2", "3-2"] },
+        ];
+
+        function rowCountKey(row, ix) {
+          if (ix.idxBall < 0 || ix.idxStrk < 0) return null;
+          var b = parseNum(row[ix.idxBall]);
+          var s = parseNum(row[ix.idxStrk]);
+          if (!Number.isFinite(b) || !Number.isFinite(s)) return null;
+          return Math.round(b) + "-" + Math.round(s);
+        }
+
+        function fillCountAvgTable(rows, pitchNames, ix) {
+          var thead = document.getElementById("count-avg-thead");
+          var tbody = document.getElementById("count-avg-tbody");
+          var noteEl = document.getElementById("count-avg-note");
+          if (!thead || !tbody) return;
+          thead.replaceChildren();
+          tbody.replaceChildren();
+
+          var hasCount = ix.idxBall >= 0 && ix.idxStrk >= 0;
+          if (noteEl) {
+            if (hasCount) {
+              noteEl.hidden = true;
+              noteEl.textContent = "";
+            } else {
+              noteEl.hidden = false;
+              noteEl.textContent = t("caNoCount");
+            }
+          }
+
+          var headTr = document.createElement("tr");
+          var thPitch = document.createElement("th");
+          thPitch.scope = "col";
+          thPitch.textContent = t("caPitch");
+          headTr.appendChild(thPitch);
+          for (var g = 0; g < COUNT_AVG_GROUPS.length; g++) {
+            var thG = document.createElement("th");
+            thG.scope = "col";
+            var lblSpan = document.createElement("span");
+            lblSpan.className = "ca-head-label";
+            lblSpan.textContent = t(COUNT_AVG_GROUPS[g].key);
+            thG.appendChild(lblSpan);
+            var cnts = COUNT_AVG_GROUPS[g].counts;
+            if (cnts && cnts.length) {
+              var cntSpan = document.createElement("span");
+              cntSpan.className = "ca-head-counts";
+              cntSpan.textContent = cnts.join(", ");
+              thG.appendChild(cntSpan);
+            }
+            headTr.appendChild(thG);
+          }
+          thead.appendChild(headTr);
+
+          var idxType = ix.idxType;
+          if (idxType < 0 || !pitchNames || !pitchNames.length) return;
+
+          var groupSets = COUNT_AVG_GROUPS.map(function (grp) {
+            return grp.counts ? new Set(grp.counts) : null;
+          });
+
+          function makeAcc() {
+            var num = [];
+            var den = [];
+            for (var i = 0; i < COUNT_AVG_GROUPS.length; i++) {
+              num.push(0);
+              den.push(0);
+            }
+            return { num: num, den: den };
+          }
+
+          var perPitch = {};
+          for (var p = 0; p < pitchNames.length; p++) {
+            perPitch[pitchNames[p]] = makeAcc();
+          }
+          var totalAcc = makeAcc();
+
+          for (var r = 0; r < rows.length; r++) {
+            var row = rows[r];
+            var fam = rowPitchLabel(row, idxType);
+            var acc = perPitch[fam];
+            var isDen = rowAvgDenominator(row, ix);
+            var isNum = isDen && rowAvgNumerator(row, ix);
+            if (!isDen) continue;
+            var ck = rowCountKey(row, ix);
+            for (var gi = 0; gi < COUNT_AVG_GROUPS.length; gi++) {
+              var inGroup =
+                groupSets[gi] === null
+                  ? true
+                  : ck !== null && groupSets[gi].has(ck);
+              if (!inGroup) continue;
+              totalAcc.den[gi]++;
+              if (isNum) totalAcc.num[gi]++;
+              if (acc) {
+                acc.den[gi]++;
+                if (isNum) acc.num[gi]++;
+              }
+            }
+          }
+
+          function appendRow(label, acc, isTotal) {
+            var tr = document.createElement("tr");
+            if (isTotal) tr.className = "count-avg-total";
+            var th = document.createElement("th");
+            th.scope = "row";
+            th.textContent = label;
+            tr.appendChild(th);
+            for (var c = 0; c < COUNT_AVG_GROUPS.length; c++) {
+              var td = document.createElement("td");
+              if (COUNT_AVG_GROUPS[c].cls) td.className = COUNT_AVG_GROUPS[c].cls;
+              td.textContent = formatAvg3(acc.num[c], acc.den[c]);
+              tr.appendChild(td);
+            }
+            tbody.appendChild(tr);
+          }
+
+          for (var pn = 0; pn < pitchNames.length; pn++) {
+            appendRow(
+              pitchFamilyDisplayName(pitchNames[pn]),
+              perPitch[pitchNames[pn]],
+              false
+            );
+          }
+          appendRow(t("caTotal"), totalAcc, true);
+        }
+
+        /**
+         * 주자상황별 타율: 주자 점유(b1·b2·b3) × 아웃(0·1·2).
+         * 분모/분자는 메인 스텟 표 AVG와 동일.
+         */
+        var RUNNER_AVG_ROWS = [
+          { key: "rsBasesEmpty", state: "000" },
+          { key: "rsB1", state: "100" },
+          { key: "rsB2", state: "010" },
+          { key: "rsB3", state: "001" },
+          { key: "rsB12", state: "110" },
+          { key: "rsB13", state: "101" },
+          { key: "rsB23", state: "011" },
+          { key: "rsLoaded", state: "111" },
+        ];
+
+        function rowBaseState(row, ix) {
+          if (ix.idxB1 < 0 || ix.idxB2 < 0 || ix.idxB3 < 0) return null;
+          var v1 = parseBoolField(row[ix.idxB1]) ? "1" : "0";
+          var v2 = parseBoolField(row[ix.idxB2]) ? "1" : "0";
+          var v3 = parseBoolField(row[ix.idxB3]) ? "1" : "0";
+          return v1 + v2 + v3;
+        }
+
+        function rowOutBucket(row, ix) {
+          if (ix.idxOut < 0) return -1;
+          var o = parseNum(row[ix.idxOut]);
+          if (!Number.isFinite(o)) return -1;
+          var oi = Math.round(o);
+          return oi >= 0 && oi <= 2 ? oi : -1;
+        }
+
+        function fillRunnerAvgTable(rows, ix) {
+          var thead = document.getElementById("runner-avg-thead");
+          var tbody = document.getElementById("runner-avg-tbody");
+          var noteEl = document.getElementById("runner-avg-note");
+          if (!thead || !tbody) return;
+          thead.replaceChildren();
+          tbody.replaceChildren();
+
+          var hasData =
+            ix.idxOut >= 0 && ix.idxB1 >= 0 && ix.idxB2 >= 0 && ix.idxB3 >= 0;
+          if (noteEl) {
+            if (hasData) {
+              noteEl.hidden = true;
+              noteEl.textContent = "";
+            } else {
+              noteEl.hidden = false;
+              noteEl.textContent = t("rsNoData");
+            }
+          }
+
+          var outCols = ["rsOut0", "rsOut1", "rsOut2"];
+          var headTr = document.createElement("tr");
+          var thSit = document.createElement("th");
+          thSit.scope = "col";
+          thSit.textContent = t("rsSituation");
+          headTr.appendChild(thSit);
+          for (var c = 0; c < outCols.length; c++) {
+            var thC = document.createElement("th");
+            thC.scope = "col";
+            thC.textContent = t(outCols[c]);
+            headTr.appendChild(thC);
+          }
+          thead.appendChild(headTr);
+
+          function makeAcc() {
+            return { num: [0, 0, 0], den: [0, 0, 0] };
+          }
+          var perState = {};
+          for (var s = 0; s < RUNNER_AVG_ROWS.length; s++) {
+            perState[RUNNER_AVG_ROWS[s].state] = makeAcc();
+          }
+          var totalAcc = makeAcc();
+
+          for (var r = 0; r < rows.length; r++) {
+            var row = rows[r];
+            if (!rowAvgDenominator(row, ix)) continue;
+            var ob = rowOutBucket(row, ix);
+            if (ob < 0) continue;
+            var isNum = rowAvgNumerator(row, ix);
+            var state = rowBaseState(row, ix);
+            var acc = state !== null ? perState[state] : null;
+            totalAcc.den[ob]++;
+            if (isNum) totalAcc.num[ob]++;
+            if (acc) {
+              acc.den[ob]++;
+              if (isNum) acc.num[ob]++;
+            }
+          }
+
+          function appendRow(label, acc, isTotal) {
+            var tr = document.createElement("tr");
+            if (isTotal) tr.className = "count-avg-total";
+            var th = document.createElement("th");
+            th.scope = "row";
+            th.textContent = label;
+            tr.appendChild(th);
+            for (var cc = 0; cc < 3; cc++) {
+              var td = document.createElement("td");
+              td.textContent = formatAvg3(acc.num[cc], acc.den[cc]);
+              tr.appendChild(td);
+            }
+            tbody.appendChild(tr);
+          }
+
+          for (var ri = 0; ri < RUNNER_AVG_ROWS.length; ri++) {
+            appendRow(
+              t(RUNNER_AVG_ROWS[ri].key),
+              perState[RUNNER_AVG_ROWS[ri].state],
+              false
+            );
+          }
+          appendRow(t("rsTotal"), totalAcc, true);
+        }
+
         function modeName(rows, idxName) {
           if (idxName < 0) return "—";
           var counts = new Map();
@@ -5135,6 +5797,8 @@
             idxType >= 0 ? allPitchTypesSorted(rows, idxType) : [];
           rebuildBatterStatsTable(allPitchTypes);
           fillBatterStatsPitchRates(rows, allPitchTypes, ix);
+          fillCountAvgTable(rows, allPitchTypes, ix);
+          fillRunnerAvgTable(rows, ix);
 
           var bZonePm = "";
           if (ix.idxBName >= 0 && sel) {
@@ -5278,6 +5942,43 @@
           var sprayHits = [];
           var hasLxLz = idxLx >= 0 && idxLz >= 0;
           var hasCxCz = idxCx >= 0 && idxCz >= 0;
+
+          function collectSprayHitsForSlot(slot) {
+            var hits = [];
+            for (var hi = 0; hi < rows.length; hi++) {
+              var rowH = rows[hi];
+              if (idxType >= 0) {
+                var famH = rowPitchLabel(rowH, idxType);
+                if (getPitchAbcSlot(famH) !== slot) continue;
+              } else if (slot > 0) {
+                continue;
+              }
+              if (!rowPassesAngleChartFilter(rowH)) continue;
+              var xiH = hasLxLz ? parseNum(rowH[idxLx]) : NaN;
+              var ziH = hasLxLz ? parseNum(rowH[idxLz]) : NaN;
+              if (Number.isNaN(xiH) || Number.isNaN(ziH)) {
+                if (hasCxCz) {
+                  xiH = parseNum(rowH[idxCx]);
+                  ziH = parseNum(rowH[idxCz]);
+                }
+              }
+              if (!Number.isNaN(xiH) && !Number.isNaN(ziH) && idxResult >= 0) {
+                var resH = parseNum(rowH[idxResult]);
+                if (!Number.isNaN(resH)) {
+                  var b1H =
+                    idx1BSafe >= 0 ? parseBoolField(rowH[idx1BSafe]) : false;
+                  hits.push({
+                    x: xiH,
+                    z: ziH,
+                    result: resH,
+                    b1: b1H,
+                  });
+                }
+              }
+            }
+            return hits;
+          }
+
           for (var i = 0; i < rows.length; i++) {
             var row = rows[i];
             if (!rowPassesAngleChartFilter(row)) continue;
@@ -5342,6 +6043,20 @@
             cx.setTransform(d, 0, 0, d, 0, 0);
             drawFn(cx, cw, ch);
           }
+          function fitAndDrawSpraySlot(c, hits) {
+            if (!c || !c.parentElement) return;
+            var r = c.parentElement.getBoundingClientRect();
+            var d = window.devicePixelRatio || 1;
+            var ch = Math.max(180, r.height - 4);
+            var cw = Math.max(140, r.width);
+            c.width = Math.floor(cw * d);
+            c.height = Math.floor(ch * d);
+            c.style.width = "100%";
+            c.style.height = ch + "px";
+            var sctx2 = c.getContext("2d");
+            sctx2.setTransform(d, 0, 0, d, 0, 0);
+            drawSprayField(sctx2, cw, ch, hits);
+          }
           var allZx = [], allZy = [], allCalls = [], allB1Safe = [];
           for (var zslot = 0; zslot < 6; zslot++) {
             var zp = collectZonePointsForSlot(zslot);
@@ -5393,6 +6108,95 @@
             var ba = {numer:numer, denom:denom, numerOuter:numerO, denomOuter:denomO};
             drawStrikeZonePanel(ctx, cw, ch, allZx, allZy, allCalls, allB1Safe,
               STRIKE_ZONE_FRAME_W_ROW6, STRIKE_ZONE_FRAME_H_ROW6, true, ba, false);
+          });
+
+          for (var slotN = 0; slotN < 6; slotN++) {
+            var slotSprayHits = collectSprayHitsForSlot(slotN);
+            fitAndDrawSpraySlot(
+              document.getElementById("spray-slot-canvas-" + slotN),
+              slotSprayHits
+            );
+            var zpSlot = collectZonePointsForSlot(slotN);
+            fitAndDrawZone(
+              document.getElementById("zone-slot-canvas-" + slotN),
+              function (ctx, cw, ch) {
+                drawStrikeZonePanel(
+                  ctx,
+                  cw,
+                  ch,
+                  zpSlot.zx,
+                  zpSlot.zy,
+                  zpSlot.calls,
+                  zpSlot.b1Safe
+                );
+              }
+            );
+            fitAndDrawZone(
+              document.getElementById("heatmap-slot-canvas-" + slotN),
+              function (ctx, cw, ch) {
+                var baSlot = computeZoneCellBaStats(slotN, cw, ch);
+                drawStrikeZonePanel(
+                  ctx,
+                  cw,
+                  ch,
+                  zpSlot.zx,
+                  zpSlot.zy,
+                  zpSlot.calls,
+                  zpSlot.b1Safe,
+                  STRIKE_ZONE_FRAME_W_ROW6,
+                  STRIKE_ZONE_FRAME_H_ROW6,
+                  true,
+                  baSlot,
+                  false
+                );
+              }
+            );
+          }
+          requestAnimationFrame(function () {
+            for (var slotR = 0; slotR < 6; slotR++) {
+              (function (slot) {
+                var slotSprayHitsR = collectSprayHitsForSlot(slot);
+                fitAndDrawSpraySlot(
+                  document.getElementById("spray-slot-canvas-" + slot),
+                  slotSprayHitsR
+                );
+                var zpSlotR = collectZonePointsForSlot(slot);
+                fitAndDrawZone(
+                  document.getElementById("zone-slot-canvas-" + slot),
+                  function (ctx, cw, ch) {
+                    drawStrikeZonePanel(
+                      ctx,
+                      cw,
+                      ch,
+                      zpSlotR.zx,
+                      zpSlotR.zy,
+                      zpSlotR.calls,
+                      zpSlotR.b1Safe
+                    );
+                  }
+                );
+                fitAndDrawZone(
+                  document.getElementById("heatmap-slot-canvas-" + slot),
+                  function (ctx, cw, ch) {
+                    var baSlotR = computeZoneCellBaStats(slot, cw, ch);
+                    drawStrikeZonePanel(
+                      ctx,
+                      cw,
+                      ch,
+                      zpSlotR.zx,
+                      zpSlotR.zy,
+                      zpSlotR.calls,
+                      zpSlotR.b1Safe,
+                      STRIKE_ZONE_FRAME_W_ROW6,
+                      STRIKE_ZONE_FRAME_H_ROW6,
+                      true,
+                      baSlotR,
+                      false
+                    );
+                  }
+                );
+              })(slotR);
+            }
           });
 
           var miss = [];
@@ -5574,6 +6378,10 @@
             "좌우투",
           ]);
           var idxBall = colIndex(header, ["ball", "Ball", "BALL", "balls", "ballCount"]);
+          var idxOut = colIndex(header, ["out", "Out", "OUT", "outs", "outCount"]);
+          var idxB1 = colIndex(header, ["b1", "B1", "onFirst", "on1b", "r1"]);
+          var idxB2 = colIndex(header, ["b2", "B2", "onSecond", "on2b", "r2"]);
+          var idxB3 = colIndex(header, ["b3", "B3", "onThird", "on3b", "r3"]);
           var idxBatSpd = colIndex(header, ["batSpd", "batspd", "BatSpd", "bat_speed", "batSpeed"]);
           var idxInn = colIndex(header, ["inn", "inning", "Inn", "INN"]);
           var idxHalf = colIndex(header, ["half", "Half", "HALF", "inningHalf"]);
@@ -5624,6 +6432,10 @@
             idxHPos: idxHPos,
             idxPHand: idxPHand,
             idxBall: idxBall,
+            idxOut: idxOut,
+            idxB1: idxB1,
+            idxB2: idxB2,
+            idxB3: idxB3,
             idxBatSpd: idxBatSpd,
             idxInn: idxInn,
             idxHalf: idxHalf,
