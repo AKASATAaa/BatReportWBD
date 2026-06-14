@@ -1087,6 +1087,108 @@
         text-align: center;
         padding: 20px 8px;
       }
+      /* 타격분석 (분석 요약) */
+      .row--analysis {
+        padding: 18px 24px 24px;
+        background: #fff;
+        border-top: 1px solid #e2e8f0;
+      }
+      .row--analysis[hidden] {
+        display: none !important;
+      }
+      .analysis-title {
+        font-size: 28px;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1;
+        margin-bottom: 6px;
+      }
+      .analysis-sub {
+        font-size: 13px;
+        font-weight: 600;
+        color: #94a3b8;
+        margin-bottom: 16px;
+      }
+      .analysis-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+        align-items: start;
+      }
+      .analysis-card {
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        background: #f8fafc;
+      }
+      .analysis-card-head {
+        font-size: 16px;
+        font-weight: 800;
+        color: #fff;
+        padding: 10px 16px;
+        letter-spacing: 0.02em;
+      }
+      .analysis-card--strength .analysis-card-head {
+        background: #16a34a;
+      }
+      .analysis-card--weakness .analysis-card-head {
+        background: #dc2626;
+      }
+      .analysis-card--improve .analysis-card-head {
+        background: #2563eb;
+      }
+      .analysis-card--scouting .analysis-card-head {
+        background: #9333ea;
+      }
+      .analysis-list {
+        list-style: none;
+        margin: 0;
+        padding: 12px 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        flex: 1;
+      }
+      .analysis-list li {
+        position: relative;
+        font-size: 13px;
+        line-height: 1.45;
+        color: #1e293b;
+        padding-left: 16px;
+        font-weight: 500;
+      }
+      .analysis-list li::before {
+        content: "";
+        position: absolute;
+        left: 2px;
+        top: 8px;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #cbd5e1;
+      }
+      .analysis-card--strength .analysis-list li::before {
+        background: #16a34a;
+      }
+      .analysis-card--weakness .analysis-list li::before {
+        background: #dc2626;
+      }
+      .analysis-card--improve .analysis-list li::before {
+        background: #2563eb;
+      }
+      .analysis-card--scouting .analysis-list li::before {
+        background: #9333ea;
+      }
+      .analysis-list li.analysis-empty {
+        color: #94a3b8;
+        font-weight: 500;
+        padding-left: 0;
+      }
+      .analysis-list li.analysis-empty::before {
+        display: none;
+      }
     </style>
   </head>
   <body>
@@ -1544,6 +1646,31 @@
           </div>
         </div>
       </section>
+
+      <section class="row row--analysis" aria-label="타격분석" id="section-analysis" hidden>
+        <div class="analysis-title" id="i18n-analysis-title">타격분석</div>
+        <div class="analysis-sub" id="i18n-analysis-sub">
+          규칙 기반 자동 요약 · 표본에 따라 일부 항목은 생략될 수 있음
+        </div>
+        <div class="analysis-grid">
+          <div class="analysis-card analysis-card--strength">
+            <div class="analysis-card-head" id="i18n-analysis-strengths">강점</div>
+            <ul class="analysis-list" id="analysis-strengths"></ul>
+          </div>
+          <div class="analysis-card analysis-card--weakness">
+            <div class="analysis-card-head" id="i18n-analysis-weaknesses">약점</div>
+            <ul class="analysis-list" id="analysis-weaknesses"></ul>
+          </div>
+          <div class="analysis-card analysis-card--improve">
+            <div class="analysis-card-head" id="i18n-analysis-improvements">개선점</div>
+            <ul class="analysis-list" id="analysis-improvements"></ul>
+          </div>
+          <div class="analysis-card analysis-card--scouting">
+            <div class="analysis-card-head" id="i18n-analysis-scouting">상대 공략</div>
+            <ul class="analysis-list" id="analysis-scouting"></ul>
+          </div>
+        </div>
+      </section>
       </div>
     </div>
 
@@ -1667,6 +1794,14 @@
             secSdeg: "타구 좌우각 구종별",
             secZonePitch: "구종군별 타격 존",
             secZoneAv: "구종군별 타율 존",
+            analysisTitle: "타격분석",
+            analysisSub:
+              "규칙 기반 자동 요약 · 표본에 따라 일부 항목은 생략될 수 있음",
+            analysisStrengths: "강점",
+            analysisWeaknesses: "약점",
+            analysisImprovements: "개선점",
+            analysisScouting: "상대 공략",
+            analysisEmpty: "표시할 항목 없음",
             stNoCapture: "캡처 영역을 찾을 수 없습니다.",
             stNoH2c: "이미지 추출: html2canvas를 불러오지 못했습니다. 네트워크를 확인하세요.",
             stPngGen: "PNG 생성 중…",
@@ -1841,6 +1976,14 @@
             secSdeg: "Spray angle by pitch group",
             secZonePitch: "Zones by pitch group",
             secZoneAv: "AVG heatmap by pitch group",
+            analysisTitle: "Batting Analysis",
+            analysisSub:
+              "Rule-based auto summary · some items may be omitted by sample size",
+            analysisStrengths: "Strengths",
+            analysisWeaknesses: "Weaknesses",
+            analysisImprovements: "Improvements",
+            analysisScouting: "How to Pitch",
+            analysisEmpty: "No items",
             stNoCapture: "Capture area not found.",
             stNoH2c: "Export: could not load html2canvas (network).",
             stPngGen: "Building PNG…",
@@ -2015,6 +2158,14 @@
             secSdeg: "飛球左右角（球種別）",
             secZonePitch: "球種グループ別ゾーン",
             secZoneAv: "球種グループ別打率ヒート",
+            analysisTitle: "打撃分析",
+            analysisSub:
+              "ルールベースの自動要約 · サンプル数により一部省略されることがあります",
+            analysisStrengths: "強み",
+            analysisWeaknesses: "弱み",
+            analysisImprovements: "改善点",
+            analysisScouting: "攻略法",
+            analysisEmpty: "該当なし",
             stNoCapture: "キャプチャ領域がありません。",
             stNoH2c: "html2canvasを読み込めません。ネットワークを確認してください。",
             stPngGen: "PNG生成中…",
@@ -2221,6 +2372,20 @@
           if (el) el.setAttribute("aria-label", t("secZonePitch"));
           el = document.getElementById("section-zone-av");
           if (el) el.setAttribute("aria-label", t("secZoneAv"));
+          el = document.getElementById("section-analysis");
+          if (el) el.setAttribute("aria-label", t("analysisTitle"));
+          el = document.getElementById("i18n-analysis-title");
+          if (el) el.textContent = t("analysisTitle");
+          el = document.getElementById("i18n-analysis-sub");
+          if (el) el.textContent = t("analysisSub");
+          el = document.getElementById("i18n-analysis-strengths");
+          if (el) el.textContent = t("analysisStrengths");
+          el = document.getElementById("i18n-analysis-weaknesses");
+          if (el) el.textContent = t("analysisWeaknesses");
+          el = document.getElementById("i18n-analysis-improvements");
+          if (el) el.textContent = t("analysisImprovements");
+          el = document.getElementById("i18n-analysis-scouting");
+          if (el) el.textContent = t("analysisScouting");
 
           var heads = I18N[uiLang].statsTh || I18N.ko.statsTh;
           var ths = document.querySelectorAll(".batter-stats-table thead th");
@@ -3252,6 +3417,18 @@
           return Number.isFinite(b) && b === 3 && Number.isFinite(cl) && cl === 1;
         }
 
+        function paIsHbp(row, ix) {
+          if (ix.idxResult >= 0) {
+            var res = parseNum(row[ix.idxResult]);
+            if (Number.isFinite(res) && Math.round(res) === 6) return true;
+          }
+          if (ix.idxCall >= 0) {
+            var cl = parseNum(row[ix.idxCall]);
+            if (Number.isFinite(cl) && cl === 3) return true;
+          }
+          return false;
+        }
+
         function collectPlateAppearances(rows, ix) {
           var groups = new Map();
           for (var i = 0; i < rows.length; i++) {
@@ -3312,6 +3489,7 @@
             hardHitPct: null,
             evAvg: null,
             ev90: null,
+            evMax: null,
             sweetPct: null,
             gbPct: null,
             fbPct: null,
@@ -3330,6 +3508,7 @@
           var swingN = 0;
           var whiffN = 0;
           var swStrN = 0;
+          var contactN = 0;
           var inZ = 0;
           var inZSwing = 0;
           var outZ = 0;
@@ -3346,6 +3525,7 @@
           var ldN = 0;
           var pullN = 0;
           var evList = [];
+          var evMax = null;
           var batSpdSum = 0;
           var batSpdN = 0;
           var zoneR = String(bZone || "")
@@ -3360,6 +3540,7 @@
             if (rowBSwing(row, ix)) {
               swingN++;
               if (rowWhiffSwing(row, ix)) whiffN++;
+              if (rowCall2Strict(row, ix)) contactN++;
             }
             if (rowWhiffSwing(row, ix)) swStrN++;
             if (rowInZone(row, ix)) {
@@ -3390,7 +3571,10 @@
               }
               if (ix.idxEv >= 0) {
                 var evv = parseNum(row[ix.idxEv]);
-                if (Number.isFinite(evv)) evList.push(evv);
+                if (Number.isFinite(evv)) {
+                  evList.push(evv);
+                  if (evMax == null || evv > evMax) evMax = evv;
+                }
               }
               if (ix.idxSpray >= 0 && (zoneR || zoneL)) {
                 var sd = parseNum(row[ix.idxSpray]);
@@ -3430,12 +3614,16 @@
             var idx90 = Math.ceil(0.9 * evList.length) - 1;
             if (idx90 < 0) idx90 = 0;
             m.ev90 = evList[idx90];
+            m.evMax = evMax;
           }
           if (totalPitches > 0) {
             m.swingPct = (100 * swingN) / totalPitches;
             m.swStrPct = (100 * swStrN) / totalPitches;
           }
-          if (swingN > 0) m.whiffPct = (100 * whiffN) / swingN;
+          if (swingN > 0) {
+            m.whiffPct = (100 * whiffN) / swingN;
+            m.contactPct = (100 * contactN) / swingN;
+          }
           if (inZ > 0) m.zSwingPct = (100 * inZSwing) / inZ;
           if (outZ > 0) m.oSwingPct = (100 * outSwing) / outZ;
           if (batSpdN > 0) m.batSpd = batSpdSum / batSpdN;
@@ -4017,6 +4205,994 @@
             }
             appendPlayerMetricRow(colRoot, def, val, lc, lang);
           }
+          sec.hidden = false;
+        }
+
+        /* ===== 타격분석 (분석 요약 생성 규칙: 분석요약_생성규칙.md 4장 타자 규칙) ===== */
+        var BA_TEMPLATES = {
+          ko: {
+            s_chase: "존 바깥 추격 스윙 {v}로 선구안 뛰어남",
+            w_chase: "존 바깥 추격 스윙 {v}로 유인구에 약함",
+            i_chase: "2스트라이크 전까지 존 바깥 변화구는 참는 훈련",
+            k_chase:
+              "존 바깥(특히 낮은 변화구)으로 유인하면 헛스윙/약한 타구 유도 가능(체이스 {v})",
+            s_whiff: "헛스윙률 {v}로 컨택 능력 우수",
+            w_whiff: "헛스윙률 {v}로 헛스윙이 잦음",
+            k_whiff:
+              "헛스윙이 많아 결정구(빠른 공/낙차 큰 변화구)로 삼진 노릴 만함",
+            s_contact: "스윙 대비 컨택률 {v}로 배트에 잘 맞힘",
+            s_evavg: "평균 타구 속도 {v}km/h로 강한 타구 생산",
+            w_evavg: "평균 타구 속도 {v}km/h로 타구질이 약한 편",
+            i_evavg: "히팅 포인트 및 배트 스피드 향상으로 타구질 개선 여지",
+            s_hardhit: "하드콘택트 비율 {v}로 장타 생산력 보유",
+            s_evmax:
+              "최고 타구 속도 {v}km/h — 로드된 타자 중 백분위 {pct}% (한 방을 갖춘 타자)",
+            s_avg: "추정 타율 {v}로 꾸준한 생산력",
+            w_avg: "추정 타율 {v}로 결과가 아쉬움",
+            s_bb: "볼넷 비율 {v}로 출루 능력 우수",
+            w_k: "삼진 비율 {v}로 삼진이 많음",
+            i_k: "2스트라이크 이후 콘택트 중심의 간결한 스윙 권장",
+            w_fam_whiff: "{label}에 헛스윙률 {v}로 약점",
+            k_fam_whiff: "{label} 계열로 승부하면 헛스윙 유도 효과적",
+            s_fam_ev: "{label}에 강함(평균 타구 {v}km/h) — 노림수 좋음",
+            k_fam_ev: "{label} 계열은 강하게 받아치므로 피하는 것이 안전",
+            k_hand: "{strong}에 강하고 {weak}에 약함 — {rec} 투수로 상대 권장",
+            w_hand: "{weak} 상대 타구질 저하",
+            k_pull_left: "좌측으로 끌어당기는 타구가 많음 — 좌측 수비 시프트 고려",
+            k_pull_right: "우측 타구가 많음 — 우측 수비 시프트 고려",
+            s_spray_even: "타구를 전 방향으로 고르게 보내 시프트가 어려움",
+            w_two_k: "2스트라이크 이후 삼진율 {v}로 추격 카운트에 약함",
+            k_two_k: "2스트라이크를 잡으면 삼진 가능성이 높음 — 유인구로 마무리",
+            k_first_avg:
+              "초구를 강하게 노림(초구 타율 {v}) — 초구 스트라이크 신중히",
+            w_ahead_avg: "유리한 카운트에서 생산력이 높음",
+            k_ahead_avg:
+              "불리한 카운트(타자 유리)를 만들지 말 것 — 앞서 나가는 승부 필요",
+            s_risp: "득점권 추정 타율 {v}로 클러치 능력 보유",
+            w_risp: "득점권 추정 타율 {v}로 찬스에 약함",
+            k_risp: "득점권에서 약하므로 도망가지 말고 정면 승부해도 무방",
+            fb_scouting: "뚜렷한 약점이 적은 타자 — 존 가장자리 위주로 정교하게 승부할 것",
+            fb_weakness: "표본 내 두드러진 약점은 확인되지 않음",
+            s_zswing: "존 안 스윙 {v} — 스트라이크 적극 공략형",
+            w_zswing: "존 안 스윙 {v} — 스트라이크를 놓치는 편(소극적)",
+            i_zswing: "스트라이크 존 안 공은 더 과감히 공격하는 연습",
+            k_zswing: "스트라이크를 잘 치지 않으므로 초구·존 안 공으로 선제 공략",
+            w_contact: "스윙 대비 컨택률 {v} — 헛스윙·파울이 잦음",
+            i_contact: "스윙 크기를 줄이고 스윙 대비 컨택률 개선에 집중",
+            s_lowk: "삼진 비율 {v} — 두 번 죽지 않는 타입",
+            w_swstr: "전체 헛스윙 {v} — 스윙·미스 비율이 높음",
+            s_ev90: "90% 타구 속도 {v}km/h (백분위 {pct}%) — 꾸준히 강한 타구",
+            w_ev90: "90% 타구 속도 {v}km/h — 최고구 대비 타구 속도 편차 큼",
+            s_barrel: "배럴 비율 {v} (백분위 {pct}%) — 이상적 타구 비율 우수",
+            s_sweet: "스윗스팟 비율 {v} — 적정 발사각 타구가 많음",
+            w_hardhit: "하드히트 {v} — 강한 타구 비율이 낮음",
+            w_gb: "땅볼 비율 {v} — 장타형보다 땅볼 타입",
+            s_ld: "라인드라이브 {v} (백분위 {pct}%) — 라인드라이브 타구 많음",
+            s_fb: "뜬공 비율 {v} — 장타·파워형 타구 성향",
+            s_pull: "당겨치기 {v} — 한 방·풀 스윙형",
+            s_obp: "추정 출루율 {v} — 종합 출루 능력 우수",
+            w_obp: "추정 출루율 {v} — 출루 생산 부족",
+            w_bb: "볼넷 비율 {v} — 볼넷이 적어 카운트 싸움에서 불리",
+            i_bb: "선구안·볼 판단으로 유리한 카운트를 만드는 연습",
+            s_two_contact: "2스트라이크 이후 삼진율 {v} — 추격 카운트에서 버팀",
+            s_first: "초구 타율 {v} — 초구 적극 공격형",
+            w_first: "초구 타율 {v} — 초구를 잘 못 받아치는 편",
+            k_first_passive: "초구를 잘 공격하지 않음 — 초구 스트라이크로 카운트 선점 가능",
+            s_ahead: "타자 유리 카운트 타율 {v} — 카운트를 살리면 위협적",
+            w_behind: "투수 유리 카운트 타율 {v} — 뒤진 카운트에서 약함",
+            k_behind: "뒤진 카운트에서 약함 — 초구·존 공으로 앞서 나가기",
+            s_empty: "주자 없음 타율 {v} — 클린 상황 생산력 양호",
+            w_empty: "주자 없음 타율 {v} — 무주자 상황에서 침묵하는 편",
+            w_fam_ev: "{label}에 타구 속도 {v}km/h — 해당 계열에 약함",
+            k_fam_ev_weak: "{label} 계열로 승부하면 유리",
+            s_fam_contact: "{label} 헛스윙 {v} — 해당 계열 컨택 우수",
+            k_pull_left_pct: "좌측 타구 {l}% (전체 {n}구) — 좌측 시프트·변화구 유도",
+            k_pull_right_pct: "우측 타구 {r}% (전체 {n}구) — 우측 시프트 고려",
+            s_oppo: "반대편 타구 {c}% — 양방향 대응 가능",
+            k_swing: "전체 스윙 {v} — 공격적 타입, 유인구·변화구로 유도",
+            k_power: "타구 속도·장타력 보유 — 실수 공은 장타로 연결될 수 있음",
+            k_contact: "컨택형 타자 — 빠른 공·변화구로 삼진보다는 유인구 유도",
+            s_batspeed: "배트 스피드 {v} (백분위 {pct}%) — 스윙 속도 우수",
+            s_league: "{label} {v} — 로드된 타자 중 백분위 {pct}%",
+            w_league: "{label} {v} — 로드된 타자 중 백분위 {pct}% (하위권)",
+            hand_l: "좌투",
+            hand_r: "우투",
+            rec_l: "좌완",
+            rec_r: "우완",
+          },
+          en: {
+            s_chase: "Chase rate {v} — excellent plate discipline",
+            w_chase: "Chase rate {v} — vulnerable to chase pitches",
+            i_chase: "Lay off out-of-zone breaking balls before two strikes",
+            k_chase:
+              "Entice with out-of-zone (esp. low breaking balls) to draw whiffs / weak contact (chase {v})",
+            s_whiff: "Whiff rate {v} — strong contact skills",
+            w_whiff: "Whiff rate {v} — swings and misses often",
+            k_whiff:
+              "Whiffs often — go for the K with a put-away pitch (heater / sharp breaker)",
+            s_contact: "Contact-per-swing {v} — puts bat on ball well",
+            s_evavg: "Avg exit velo {v} km/h — produces hard contact",
+            w_evavg: "Avg exit velo {v} km/h — contact quality is light",
+            i_evavg: "Room to improve contact quality via hitting point and bat speed",
+            s_hardhit: "Hard-hit rate {v} — has power production",
+            s_evmax:
+              "Max exit velo {v} km/h — {pct}th percentile among loaded batters (has pop)",
+            s_avg: "Est. AVG {v} — steady production",
+            w_avg: "Est. AVG {v} — results lacking",
+            s_bb: "Walk rate {v} — strong on-base ability",
+            w_k: "Strikeout rate {v} — strikes out often",
+            i_k: "After two strikes, shorten up with a contact-first swing",
+            w_fam_whiff: "Whiff rate {v} vs {label} — a weakness",
+            k_fam_whiff: "Attack with {label} to draw whiffs",
+            s_fam_ev: "Strong vs {label} (avg EV {v} km/h) — sits on it well",
+            k_fam_ev: "Hits {label} hard — safer to avoid it",
+            k_hand: "Strong vs {strong}, weak vs {weak} — pitch a {rec} arm",
+            w_hand: "Contact quality drops vs {weak}",
+            k_pull_left: "Pulls a lot to the left — consider a left-side shift",
+            k_pull_right: "Lots of contact to the right — consider a right-side shift",
+            s_spray_even: "Sprays the ball all fields — hard to shift",
+            w_two_k: "Two-strike K rate {v} — weak in chase counts",
+            k_two_k: "High K odds once at two strikes — finish with a chase pitch",
+            k_first_avg:
+              "Hunts the first pitch (first-pitch AVG {v}) — be careful with first-pitch strikes",
+            w_ahead_avg: "Produces well when ahead in the count",
+            k_ahead_avg:
+              "Don't fall behind (hitter ahead) — get ahead in the count",
+            s_risp: "RISP est. AVG {v} — clutch ability",
+            w_risp: "RISP est. AVG {v} — weak with runners in scoring position",
+            k_risp: "Weak with RISP — fine to challenge head-on, no need to nibble",
+            fb_scouting:
+              "Few clear weaknesses — work the edges of the zone precisely",
+            fb_weakness: "No standout weakness found within the sample",
+            s_zswing: "In-zone swing {v} — attacks strikes aggressively",
+            w_zswing: "In-zone swing {v} — lets too many strikes go by",
+            i_zswing: "Be more aggressive on strikes in the zone",
+            k_zswing: "Does not punish strikes — attack early in the count",
+            w_contact: "Contact per swing {v} — misses and fouls often",
+            i_contact: "Shorten the swing path to raise contact rate",
+            s_lowk: "K rate {v} — rarely strikes out",
+            w_swstr: "SwStr {v} — whiffs per pitch are high",
+            s_ev90: "90th% EV {v} km/h ({pct}th pctile) — consistently hard contact",
+            w_ev90: "90th% EV {v} km/h — big gap vs max EV",
+            s_barrel: "Barrel% {v} ({pct}th pctile) — ideal contact rate",
+            s_sweet: "Sweet-spot% {v} — many optimal launch-angle balls",
+            w_hardhit: "HardHit% {v} — weak hard-contact rate",
+            w_gb: "GB% {v} — ground-ball profile over power",
+            s_ld: "LD% {v} ({pct}th pctile) — lots of line drives",
+            s_fb: "FB% {v} — fly-ball / power tendency",
+            s_pull: "Pull% {v} — pull-power swing profile",
+            s_obp: "Est. OBP {v} — strong overall on-base",
+            w_obp: "Est. OBP {v} — limited on-base production",
+            w_bb: "Walk rate {v} — low patience at the plate",
+            i_bb: "Work on pitch recognition to earn better counts",
+            s_two_contact: "Two-strike K rate {v} — survives chase counts",
+            s_first: "First-pitch AVG {v} — aggressive early-count hitter",
+            w_first: "First-pitch AVG {v} — struggles on 0-0",
+            k_first_passive: "Does not attack first pitch — steal strikes early",
+            s_ahead: "Ahead-count AVG {v} — dangerous when ahead",
+            w_behind: "Behind-count AVG {v} — weak when behind",
+            k_behind: "Weak when behind — get ahead with early strikes",
+            s_empty: "Bases-empty AVG {v} — produces with clean bases",
+            w_empty: "Bases-empty AVG {v} — quiet with no runners",
+            w_fam_ev: "Avg EV {v} km/h vs {label} — weak vs this family",
+            k_fam_ev_weak: "Pitch {label} family for an edge",
+            s_fam_contact: "Whiff {v} vs {label} — handles this family well",
+            k_pull_left_pct: "Left-side contact {l}% ({n} BIP) — shift / break away",
+            k_pull_right_pct: "Right-side contact {r}% ({n} BIP) — shift right",
+            s_oppo: "Opposite-field {c}% — uses all fields",
+            k_swing: "Swing rate {v} — free swinger; expand the zone",
+            k_power: "Power in the bat — mistakes can leave the yard",
+            k_contact: "Contact hitter — chase breaking balls over put-away heat",
+            s_batspeed: "Bat speed {v} ({pct}th pctile) — elite swing speed",
+            s_league: "{label} {v} — {pct}th percentile among loaded batters",
+            w_league: "{label} {v} — {pct}th percentile among loaded batters (bottom tier)",
+            hand_l: "LHP",
+            hand_r: "RHP",
+            rec_l: "left-handed",
+            rec_r: "right-handed",
+          },
+          ja: {
+            s_chase: "ゾーン外の追いかけスイング {v} で選球眼が優秀",
+            w_chase: "ゾーン外の追いかけスイング {v} で誘い球に弱い",
+            i_chase: "2ストライクまではゾーン外の変化球を見送る練習",
+            k_chase:
+              "ゾーン外(特に低めの変化球)で誘えば空振り/弱い打球を誘発可能(チェイス {v})",
+            s_whiff: "空振り率 {v} でコンタクト能力が優秀",
+            w_whiff: "空振り率 {v} で空振りが多い",
+            k_whiff: "空振りが多く、決め球(速球/落差の大きい変化球)で三振を狙える",
+            s_contact: "スイングに対するコンタクト率 {v} でよく当てる",
+            s_evavg: "平均打球速度 {v}km/h で強い打球を生産",
+            w_evavg: "平均打球速度 {v}km/h で打球質が弱め",
+            i_evavg: "ヒッティングポイントとバットスピード向上で打球質改善の余地",
+            s_hardhit: "ハードコンタクト率 {v} で長打力あり",
+            s_evmax:
+              "最高打球速度 {v}km/h — 読み込み打者中パーセンタイル{pct}%（一発のある打者）",
+            s_avg: "推定打率 {v} で安定した生産力",
+            w_avg: "推定打率 {v} で結果が物足りない",
+            s_bb: "四球率 {v} で出塁能力が優秀",
+            w_k: "三振率 {v} で三振が多い",
+            i_k: "2ストライク以降はコンタクト重視の簡潔なスイングを推奨",
+            w_fam_whiff: "{label}に空振り率 {v} で弱点",
+            k_fam_whiff: "{label}系で勝負すれば空振りを誘発しやすい",
+            s_fam_ev: "{label}に強い(平均打球 {v}km/h) — 狙いが良い",
+            k_fam_ev: "{label}系は強く打ち返すため避けるのが安全",
+            k_hand: "{strong}に強く{weak}に弱い — {rec}投手で対戦推奨",
+            w_hand: "{weak}相手は打球質が低下",
+            k_pull_left: "左へ引っ張る打球が多い — 左方向のシフトを検討",
+            k_pull_right: "右方向の打球が多い — 右方向のシフトを検討",
+            s_spray_even: "全方向へ打ち分けるためシフトが難しい",
+            w_two_k: "2ストライク以降の三振率 {v} で追い込まれると弱い",
+            k_two_k: "2ストライクを取れば三振の可能性が高い — 誘い球で仕留める",
+            k_first_avg: "初球を強く狙う(初球打率 {v}) — 初球ストライクは慎重に",
+            w_ahead_avg: "有利なカウントで生産力が高い",
+            k_ahead_avg: "不利なカウント(打者有利)を作らないこと — 先手の勝負が必要",
+            s_risp: "得点圏推定打率 {v} でクラッチ能力あり",
+            w_risp: "得点圏推定打率 {v} でチャンスに弱い",
+            k_risp: "得点圏で弱いため逃げずに正面勝負でも問題なし",
+            fb_scouting: "目立った弱点が少ない打者 — ゾーン際を中心に精密に勝負",
+            fb_weakness: "サンプル内で目立った弱点は確認されず",
+            s_zswing: "ゾーン内スイング {v} — ストライクを積極的に攻める",
+            w_zswing: "ゾーン内スイング {v} — ストライクを見逃しがち",
+            i_zswing: "ゾーン内の球はもっと積極的に打つ練習",
+            k_zswing: "ストライクを活かせない — 初球・ゾーン内で先手",
+            w_contact: "スイング対コンタクト {v} — 空振り・ファウルが多い",
+            i_contact: "スイングを短くしてコンタクト率改善",
+            s_lowk: "三振率 {v} — 三振が少ないタイプ",
+            w_swstr: "全投球空振り {v} — 空振り率が高い",
+            s_ev90: "90%打球速度 {v}km/h (パーセンタイル{pct}%) — 安定して強い打球",
+            w_ev90: "90%打球速度 {v}km/h — 最高値との差が大きい",
+            s_barrel: "バレル率 {v} (パーセンタイル{pct}%) — 理想的打球率が高い",
+            s_sweet: "スイートスポット {v} — 適正角度の打球が多い",
+            w_hardhit: "ハードヒット {v} — 強い打球率が低い",
+            w_gb: "ゴロ率 {v} — パワーよりゴロタイプ",
+            s_ld: "ライナー {v} (パーセンタイル{pct}%) — ライナーが多い",
+            s_fb: "フライ {v} — 長打・パワー傾向",
+            s_pull: "プル {v} — 一発型スイング",
+            s_obp: "推定出塁率 {v} — 総合出塁能力が高い",
+            w_obp: "推定出塁率 {v} — 出塁生産が不足",
+            w_bb: "四球率 {v} — 四球が少なくカウント不利",
+            i_bb: "選球眼で有利カウントを作る練習",
+            s_two_contact: "2ストライク三振率 {v} — 追い込まれても粘る",
+            s_first: "初球打率 {v} — 初球積極型",
+            w_first: "初球打率 {v} — 初球が苦手",
+            k_first_passive: "初球を攻めない — 初球ストライクでカウント主導",
+            s_ahead: "打者有利カウント打率 {v} — カウントを活かすと脅威",
+            w_behind: "投手有利カウント打率 {v} — 不利カウントで弱い",
+            k_behind: "不利カウントで弱い — 初球・ゾーンで先手",
+            s_empty: "走者なし打率 {v} — クリーン状況で生産",
+            w_empty: "走者なし打率 {v} — 無走者で沈黙しがち",
+            w_fam_ev: "{label}平均打球 {v}km/h — この系統に弱い",
+            k_fam_ev_weak: "{label}系で勝負すると有利",
+            s_fam_contact: "{label}空振り {v} — この系統のコンタクト良好",
+            k_pull_left_pct: "左方向 {l}% (計{n}球) — 左シフト・変化球",
+            k_pull_right_pct: "右方向 {r}% (計{n}球) — 右シフト検討",
+            s_oppo: "反対方向 {c}% — 全方向対応可能",
+            k_swing: "全体スイング {v} — 攻撃的、誘い球で仕掛け",
+            k_power: "打球速度・長打力あり — ミス球は長打になりうる",
+            k_contact: "コンタクト型 — 速球より誘い球で空振り",
+            s_batspeed: "バットスピード {v} (パーセンタイル{pct}%) — スイング速度優秀",
+            s_league: "{label} {v} — 読み込み打者中パーセンタイル{pct}%",
+            w_league: "{label} {v} — 読み込み打者中パーセンタイル{pct}% (下位)",
+            hand_l: "左投",
+            hand_r: "右投",
+            rec_l: "左腕",
+            rec_r: "右腕",
+          },
+        };
+
+        function baT(key) {
+          var pack = BA_TEMPLATES[uiLang] || BA_TEMPLATES.ko;
+          var v = pack[key];
+          if (v != null) return v;
+          var fb = BA_TEMPLATES.ko[key];
+          return fb != null ? fb : key;
+        }
+
+        function baPct(frac) {
+          if (frac == null || !Number.isFinite(frac)) return "N/A";
+          return Math.round(frac * 100) + "%";
+        }
+        function baDec3(v) {
+          if (v == null || !Number.isFinite(v)) return "N/A";
+          return v.toFixed(3);
+        }
+        function baInt(v) {
+          if (v == null || !Number.isFinite(v)) return "N/A";
+          return String(Math.round(v));
+        }
+        function baOk(v) {
+          return v != null && Number.isFinite(v);
+        }
+
+        function computeBatterAnalysis(rows, ix, bZone) {
+          var idxType = ix.idxType;
+          var idxEv = ix.idxEv;
+          var idxSpray = ix.idxSpray;
+          var idxPHand = ix.idxPHand;
+
+          var swingN = 0;
+          var whiffN = 0;
+          var outZ = 0;
+          var outSwing = 0;
+          var call2SwingN = 0;
+          var evVals = [];
+          var evMax = null;
+          var hardDen = 0;
+          var hardNum = 0;
+          var fam = Object.create(null);
+          var hand = { L: { seen: 0, evSum: 0, evN: 0 }, R: { seen: 0, evSum: 0, evN: 0 } };
+          var sprayL = 0;
+          var sprayR = 0;
+          var sprayC = 0;
+          var sprayN = 0;
+
+          for (var r = 0; r < rows.length; r++) {
+            var row = rows[r];
+            var sw = rowBSwing(row, ix);
+            if (sw) swingN++;
+            if (rowWhiffSwing(row, ix)) whiffN++;
+            if (rowOutZone(row, ix)) {
+              outZ++;
+              if (sw) outSwing++;
+            }
+            var isBip = rowResultBip1to4(row, ix);
+            if (isBip) {
+              hardDen++;
+              if (rowIsHardHit(row, ix)) hardNum++;
+            }
+            var isContact = rowCall2Strict(row, ix);
+            if (sw && isContact) call2SwingN++;
+
+            var famKey = idxType >= 0 ? rowPitchLabel(row, idxType) : null;
+            if (famKey != null) {
+              if (!fam[famKey])
+                fam[famKey] = { seen: 0, swing: 0, whiff: 0, evSum: 0, evN: 0 };
+              fam[famKey].seen++;
+              if (sw) fam[famKey].swing++;
+              if (rowWhiffSwing(row, ix)) fam[famKey].whiff++;
+            }
+
+            var hcode = idxPHand >= 0 ? pitcherHandFromCell(row[idxPHand]) : "";
+            if (hcode === "L" || hcode === "R") hand[hcode].seen++;
+
+            if (isContact) {
+              var evv = idxEv >= 0 ? parseNum(row[idxEv]) : NaN;
+              if (Number.isFinite(evv)) {
+                evVals.push(evv);
+                if (evMax == null || evv > evMax) evMax = evv;
+                if (famKey != null && fam[famKey]) {
+                  fam[famKey].evSum += evv;
+                  fam[famKey].evN++;
+                }
+                if (hcode === "L" || hcode === "R") {
+                  hand[hcode].evSum += evv;
+                  hand[hcode].evN++;
+                }
+              }
+              var sd = idxSpray >= 0 ? parseNum(row[idxSpray]) : NaN;
+              if (Number.isFinite(sd)) {
+                sprayN++;
+                if (sd < -15) sprayL++;
+                else if (sd > 15) sprayR++;
+                else sprayC++;
+              }
+            }
+          }
+
+          var evAvg = null;
+          if (evVals.length) {
+            var es = 0;
+            for (var e = 0; e < evVals.length; e++) es += evVals[e];
+            evAvg = es / evVals.length;
+          }
+
+          // 타석(PA) 단위 집계: 시작 행(주자상황) + 종료 행(결과/카운트)
+          var groups = new Map();
+          for (var gi = 0; gi < rows.length; gi++) {
+            var grow = rows[gi];
+            var gk = paGroupKey(grow, ix);
+            if (!gk) continue;
+            if (!groups.has(gk)) groups.set(gk, []);
+            groups.get(gk).push(grow);
+          }
+          var pas = [];
+          groups.forEach(function (prs) {
+            var endRow = prs[prs.length - 1];
+            for (var j = prs.length - 1; j >= 0; j--) {
+              if (paEndsPlateAppearance(prs[j], ix)) {
+                endRow = prs[j];
+                break;
+              }
+            }
+            pas.push({ start: prs[0], end: endRow });
+          });
+
+          function emptyBucket() {
+            return { pa: 0, ab: 0, h: 0, k: 0 };
+          }
+          var paN = pas.length;
+          var abN = 0;
+          var hN = 0;
+          var kN = 0;
+          var bbN = 0;
+          var hbpN = 0;
+          var bTwo = emptyBucket();
+          var bFirst = emptyBucket();
+          var bAhead = emptyBucket();
+          var bBehind = emptyBucket();
+          var bRisp = emptyBucket();
+          var bEmpty = emptyBucket();
+
+          for (var p = 0; p < pas.length; p++) {
+            var endR = pas[p].end;
+            var startR = pas[p].start;
+            var isAb = rowAvgDenominator(endR, ix);
+            var isHit = isAb && rowAvgNumerator(endR, ix);
+            var isK = paIsStrikeout(endR, ix);
+            if (isAb) abN++;
+            if (isHit) hN++;
+            if (isK) kN++;
+            if (paIsWalk(endR, ix)) bbN++;
+            if (paIsHbp(endR, ix)) hbpN++;
+
+            var ball = ix.idxBall >= 0 ? parseNum(endR[ix.idxBall]) : NaN;
+            var strk = ix.idxStrk >= 0 ? parseNum(endR[ix.idxStrk]) : NaN;
+            if (Number.isFinite(ball) && Number.isFinite(strk)) {
+              if (strk >= 2) {
+                bTwo.pa++;
+                if (isAb) bTwo.ab++;
+                if (isHit) bTwo.h++;
+                if (isK) bTwo.k++;
+              } else if (ball === 0 && strk === 0) {
+                bFirst.pa++;
+                if (isAb) bFirst.ab++;
+                if (isHit) bFirst.h++;
+              } else if (ball > strk) {
+                bAhead.pa++;
+                if (isAb) bAhead.ab++;
+                if (isHit) bAhead.h++;
+              } else if (strk > ball) {
+                bBehind.pa++;
+                if (isAb) bBehind.ab++;
+                if (isHit) bBehind.h++;
+              }
+            }
+
+            var bstate = rowBaseState(startR, ix);
+            if (bstate === "000") {
+              bEmpty.pa++;
+              if (isAb) bEmpty.ab++;
+              if (isHit) bEmpty.h++;
+            }
+            if (bstate && (bstate.charAt(1) === "1" || bstate.charAt(2) === "1")) {
+              bRisp.pa++;
+              if (isAb) bRisp.ab++;
+              if (isHit) bRisp.h++;
+            }
+          }
+
+          var obpDen = abN + bbN + hbpN;
+          var obpNum = hN + bbN + hbpN;
+
+          function bucketAvg(b) {
+            return b.ab > 0 ? b.h / b.ab : null;
+          }
+          function bucketK(b) {
+            return b.pa > 0 ? b.k / b.pa : null;
+          }
+
+          var famList = [];
+          for (var fk in fam) {
+            if (!Object.prototype.hasOwnProperty.call(fam, fk)) continue;
+            var fo = fam[fk];
+            famList.push({
+              key: fk,
+              seen: fo.seen,
+              whiff: fo.swing > 0 ? fo.whiff / fo.swing : null,
+              evAvg: fo.evN > 0 ? fo.evSum / fo.evN : null,
+            });
+          }
+
+          return {
+            chase: outZ > 0 ? outSwing / outZ : null,
+            whiff: swingN > 0 ? whiffN / swingN : null,
+            contact: swingN > 0 ? call2SwingN / swingN : null,
+            evAvg: evAvg,
+            evMax: evMax,
+            hardHit: hardDen > 0 ? hardNum / hardDen : null,
+            avg: abN > 0 ? hN / abN : null,
+            ab: abN,
+            paN: paN,
+            kPct: paN > 0 ? kN / paN : null,
+            bbPct: paN > 0 ? bbN / paN : null,
+            obp: obpDen > 0 ? obpNum / obpDen : null,
+            pitchN: rows.length,
+            families: famList,
+            handL: { seen: hand.L.seen, evAvg: hand.L.evN > 0 ? hand.L.evSum / hand.L.evN : null },
+            handR: { seen: hand.R.seen, evAvg: hand.R.evN > 0 ? hand.R.evSum / hand.R.evN : null },
+            spray: { left: sprayL, right: sprayR, center: sprayC, n: sprayN },
+            two: { pa: bTwo.pa, avg: bucketAvg(bTwo), kRate: bucketK(bTwo) },
+            first: { pa: bFirst.pa, avg: bucketAvg(bFirst) },
+            ahead: { pa: bAhead.pa, avg: bucketAvg(bAhead) },
+            behind: { pa: bBehind.pa, avg: bucketAvg(bBehind) },
+            risp: { pa: bRisp.pa, avg: bucketAvg(bRisp) },
+            empty: { pa: bEmpty.pa, avg: bucketAvg(bEmpty) },
+            pct: {},
+          };
+        }
+
+        function baGreat(m, key) {
+          return m.pct && m.pct[key] != null && m.pct[key] >= 67;
+        }
+        function baPoor(m, key) {
+          return m.pct && m.pct[key] != null && m.pct[key] <= 33;
+        }
+        function baPctLabel(m, key) {
+          return m.pct && m.pct[key] != null ? Math.round(m.pct[key]) : null;
+        }
+
+        function enrichBatterAnalysisForSummary(m, rows, ix, bZone, lc) {
+          var bat = computeBattingMetrics(rows, ix, bZone);
+          m.ev90 = bat.ev90;
+          m.barrelPct = bat.barrelPct;
+          m.hardHitPct = bat.hardHitPct;
+          m.sweetPct = bat.sweetPct;
+          m.gbPct = bat.gbPct;
+          m.fbPct = bat.fbPct;
+          m.ldPct = bat.ldPct;
+          m.pullPct = bat.pullPct;
+          m.zSwingPct = bat.zSwingPct;
+          m.oSwingPct = bat.oSwingPct;
+          m.swingPct = bat.swingPct;
+          m.swStrPct = bat.swStrPct;
+          m.whiffPct100 = bat.whiffPct;
+          m.contactPct100 = bat.contactPct;
+          m.batSpd = bat.batSpd;
+          m.bbPct100 = bat.bbPct;
+          m.kPct100 = bat.kPct;
+          if (bat.avg != null) m.avg = bat.avg;
+
+          m.pct = {};
+          if (!lc) return;
+          function attach(name, val, leagueKey, invert) {
+            if (!baOk(val)) return;
+            var pop = leaguePopulationsForMetric(lc, {
+              key: leagueKey,
+              fielding: false,
+            });
+            if (pop.length < 3) return;
+            var p = percentileRank(val, pop, !!invert);
+            if (p != null) m.pct[name] = p;
+          }
+          attach("oSwing", m.oSwingPct, "oSwingPct", true);
+          attach("zSwing", m.zSwingPct, "zSwingPct", false);
+          attach("whiff", m.whiffPct100, "whiffPct", true);
+          attach("contact", m.contactPct100, "contactPct", false);
+          attach("swing", m.swingPct, "swingPct", false);
+          attach("swStr", m.swStrPct, "swStrPct", true);
+          attach("evAvg", m.evAvg, "evAvg", false);
+          attach("ev90", m.ev90, "ev90", false);
+          attach("evMax", m.evMax, "evMax", false);
+          attach("hardHit", m.hardHitPct, "hardHitPct", false);
+          attach("barrel", m.barrelPct, "barrelPct", false);
+          attach("sweet", m.sweetPct, "sweetPct", false);
+          attach("avg", m.avg, "avg", false);
+          attach("bb", m.bbPct100, "bbPct", false);
+          attach("k", m.kPct100, "kPct", true);
+          attach("batSpd", m.batSpd, "batSpd", false);
+          attach("ld", m.ldPct, "ldPct", false);
+          attach("pull", m.pullPct, "pullPct", false);
+          m.evMaxPct = m.pct.evMax;
+        }
+
+        function buildBatterAnalysisSummary(m) {
+          var S = [];
+          var W = [];
+          var I = [];
+          var K = [];
+          function tp(key, o) {
+            return tpl(baT(key), o || {});
+          }
+          function pct1(v) {
+            return v == null || !Number.isFinite(v) ? "—" : v.toFixed(1) + "%";
+          }
+
+          // ── 선구안 · 스윙 ──
+          if ((baOk(m.chase) && m.chase <= 0.22) || baGreat(m, "oSwing"))
+            S.push(
+              tp("s_chase", {
+                v: baOk(m.oSwingPct) ? pct1(m.oSwingPct) : baPct(m.chase),
+              })
+            );
+          if ((baOk(m.chase) && m.chase >= 0.35) || baPoor(m, "oSwing")) {
+            W.push(
+              tp("w_chase", {
+                v: baOk(m.oSwingPct) ? pct1(m.oSwingPct) : baPct(m.chase),
+              })
+            );
+            I.push(tp("i_chase", {}));
+            K.push(
+              tp("k_chase", {
+                v: baOk(m.oSwingPct) ? pct1(m.oSwingPct) : baPct(m.chase),
+              })
+            );
+          }
+          if (baOk(m.zSwingPct) && (m.zSwingPct >= 68 || baGreat(m, "zSwing")))
+            S.push(tp("s_zswing", { v: pct1(m.zSwingPct) }));
+          if (baOk(m.zSwingPct) && (m.zSwingPct <= 55 || baPoor(m, "zSwing"))) {
+            W.push(tp("w_zswing", { v: pct1(m.zSwingPct) }));
+            I.push(tp("i_zswing", {}));
+            K.push(tp("k_zswing", {}));
+          }
+          if ((baOk(m.whiff) && m.whiff <= 0.15) || baGreat(m, "whiff"))
+            S.push(
+              tp("s_whiff", {
+                v: baOk(m.whiffPct100) ? pct1(m.whiffPct100) : baPct(m.whiff),
+              })
+            );
+          if ((baOk(m.whiff) && m.whiff >= 0.28) || baPoor(m, "whiff")) {
+            W.push(
+              tp("w_whiff", {
+                v: baOk(m.whiffPct100) ? pct1(m.whiffPct100) : baPct(m.whiff),
+              })
+            );
+            K.push(tp("k_whiff", {}));
+          }
+          if ((baOk(m.contact) && m.contact >= 0.82) || baGreat(m, "contact"))
+            S.push(
+              tp("s_contact", {
+                v: baOk(m.contactPct100)
+                  ? pct1(m.contactPct100)
+                  : baPct(m.contact),
+              })
+            );
+          if ((baOk(m.contact) && m.contact <= 0.72) || baPoor(m, "contact")) {
+            W.push(
+              tp("w_contact", {
+                v: baOk(m.contactPct100)
+                  ? pct1(m.contactPct100)
+                  : baPct(m.contact),
+              })
+            );
+            I.push(tp("i_contact", {}));
+          }
+          if (baOk(m.kPct) && (m.kPct <= 0.18 || baGreat(m, "k")))
+            S.push(
+              tp("s_lowk", {
+                v: baOk(m.kPct100) ? pct1(m.kPct100) : baPct(m.kPct),
+              })
+            );
+          if (baOk(m.swStrPct) && (m.swStrPct >= 14 || baPoor(m, "swStr")))
+            W.push(tp("w_swstr", { v: pct1(m.swStrPct) }));
+          if (baOk(m.swingPct) && (m.swingPct >= 52 || baGreat(m, "swing")))
+            K.push(tp("k_swing", { v: pct1(m.swingPct) }));
+
+          // ── 타구질 · 파워 ──
+          if (
+            (baOk(m.evAvg) && m.evAvg >= 115) ||
+            baGreat(m, "evAvg")
+          ) {
+            S.push(tp("s_evavg", { v: baInt(m.evAvg) }));
+            if (baPctLabel(m, "evAvg") != null)
+              S.push(
+                tp("s_league", {
+                  label: "EV",
+                  v: baInt(m.evAvg) + "km/h",
+                  pct: baPctLabel(m, "evAvg"),
+                })
+              );
+          }
+          if (baOk(m.evAvg) && (m.evAvg <= 100 || baPoor(m, "evAvg"))) {
+            W.push(tp("w_evavg", { v: baInt(m.evAvg) }));
+            I.push(tp("i_evavg", {}));
+          }
+          if (baOk(m.ev90) && baGreat(m, "ev90"))
+            S.push(
+              tp("s_ev90", {
+                v: baInt(m.ev90),
+                pct: baPctLabel(m, "ev90"),
+              })
+            );
+          if (
+            baOk(m.ev90) &&
+            baOk(m.evMax) &&
+            m.evMax - m.ev90 >= 18
+          )
+            W.push(tp("w_ev90", { v: baInt(m.ev90) }));
+          if (
+            baOk(m.evMax) &&
+            m.evMaxPct != null &&
+            m.evMaxPct >= 67
+          )
+            S.push(
+              tp("s_evmax", {
+                v: baInt(m.evMax),
+                pct: Math.round(m.evMaxPct),
+              })
+            );
+          if (
+            (baOk(m.hardHit) && m.hardHit >= 0.4) ||
+            baGreat(m, "hardHit")
+          )
+            S.push(
+              tp("s_hardhit", {
+                v: baOk(m.hardHitPct) ? pct1(m.hardHitPct) : baPct(m.hardHit),
+              })
+            );
+          if (baOk(m.hardHitPct) && baPoor(m, "hardHit"))
+            W.push(tp("w_hardhit", { v: pct1(m.hardHitPct) }));
+          if (baOk(m.barrelPct) && (m.barrelPct >= 8 || baGreat(m, "barrel")))
+            S.push(
+              tp("s_barrel", {
+                v: pct1(m.barrelPct),
+                pct: baPctLabel(m, "barrel"),
+              })
+            );
+          if (baOk(m.sweetPct) && (m.sweetPct >= 32 || baGreat(m, "sweet")))
+            S.push(tp("s_sweet", { v: pct1(m.sweetPct) }));
+          if (baOk(m.ldPct) && (m.ldPct >= 24 || baGreat(m, "ld")))
+            S.push(
+              tp("s_ld", {
+                v: pct1(m.ldPct),
+                pct: baPctLabel(m, "ld"),
+              })
+            );
+          if (baOk(m.fbPct) && m.fbPct >= 38) S.push(tp("s_fb", { v: pct1(m.fbPct) }));
+          if (baOk(m.gbPct) && m.gbPct >= 48) W.push(tp("w_gb", { v: pct1(m.gbPct) }));
+          if (baOk(m.pullPct) && (m.pullPct >= 42 || baGreat(m, "pull")))
+            S.push(tp("s_pull", { v: pct1(m.pullPct) }));
+          if (baOk(m.batSpd) && baGreat(m, "batSpd"))
+            S.push(
+              tp("s_batspeed", {
+                v: baInt(m.batSpd),
+                pct: baPctLabel(m, "batSpd"),
+              })
+            );
+          if (baGreat(m, "evAvg") || baGreat(m, "hardHit") || baGreat(m, "evMax"))
+            K.push(tp("k_power", {}));
+          if (baGreat(m, "contact") && baGreat(m, "k"))
+            K.push(tp("k_contact", {}));
+
+          // ── 성적 · 출루 ──
+          if ((baOk(m.avg) && m.avg >= 0.3) || baGreat(m, "avg"))
+            S.push(tp("s_avg", { v: baDec3(m.avg) }));
+          if (baOk(m.avg) && (m.avg <= 0.2 || baPoor(m, "avg")) && m.ab >= 8)
+            W.push(tp("w_avg", { v: baDec3(m.avg) }));
+          if (baOk(m.obp) && m.obp >= 0.38)
+            S.push(tp("s_obp", { v: baDec3(m.obp) }));
+          if (baOk(m.obp) && m.obp <= 0.28 && m.paN >= 8)
+            W.push(tp("w_obp", { v: baDec3(m.obp) }));
+          if ((baOk(m.bbPct) && m.bbPct >= 0.12) || baGreat(m, "bb"))
+            S.push(
+              tp("s_bb", {
+                v: baOk(m.bbPct100) ? pct1(m.bbPct100) : baPct(m.bbPct),
+              })
+            );
+          if (baOk(m.bbPct) && m.bbPct <= 0.06 && m.paN >= 8) {
+            W.push(
+              tp("w_bb", {
+                v: baOk(m.bbPct100) ? pct1(m.bbPct100) : baPct(m.bbPct),
+              })
+            );
+            I.push(tp("i_bb", {}));
+          }
+          if (baOk(m.kPct) && (m.kPct >= 0.3 || baPoor(m, "k"))) {
+            W.push(
+              tp("w_k", {
+                v: baOk(m.kPct100) ? pct1(m.kPct100) : baPct(m.kPct),
+              })
+            );
+            I.push(tp("i_k", {}));
+          }
+
+          // ── 구종 계열 ──
+          var weakFams = m.families
+            .filter(function (f) {
+              return f.seen >= 3 && baOk(f.whiff) && f.whiff >= 0.35;
+            })
+            .sort(function (a, b) {
+              return b.whiff - a.whiff;
+            })
+            .slice(0, 3);
+          var weakSet = Object.create(null);
+          for (var wi = 0; wi < weakFams.length; wi++) {
+            weakSet[weakFams[wi].key] = true;
+            var wlbl = pitchFamilyDisplayName(weakFams[wi].key);
+            W.push(
+              tp("w_fam_whiff", { label: wlbl, v: baPct(weakFams[wi].whiff) })
+            );
+            K.push(tp("k_fam_whiff", { label: wlbl }));
+          }
+          var weakEvFams = m.families
+            .filter(function (f) {
+              return f.seen >= 3 && baOk(f.evAvg) && f.evAvg <= 100;
+            })
+            .sort(function (a, b) {
+              return a.evAvg - b.evAvg;
+            })
+            .slice(0, 2);
+          for (var we = 0; we < weakEvFams.length; we++) {
+            var wel = pitchFamilyDisplayName(weakEvFams[we].key);
+            W.push(
+              tp("w_fam_ev", {
+                label: wel,
+                v: baInt(weakEvFams[we].evAvg),
+              })
+            );
+            K.push(tp("k_fam_ev_weak", { label: wel }));
+          }
+          var strongFams = m.families
+            .filter(function (f) {
+              return (
+                f.seen >= 3 &&
+                baOk(f.evAvg) &&
+                (f.evAvg >= 115) &&
+                !weakSet[f.key]
+              );
+            })
+            .sort(function (a, b) {
+              return b.evAvg - a.evAvg;
+            })
+            .slice(0, 2);
+          for (var si = 0; si < strongFams.length; si++) {
+            var slbl = pitchFamilyDisplayName(strongFams[si].key);
+            S.push(tp("s_fam_ev", { label: slbl, v: baInt(strongFams[si].evAvg) }));
+            K.push(tp("k_fam_ev", { label: slbl }));
+          }
+          var contactFams = m.families
+            .filter(function (f) {
+              return (
+                f.seen >= 4 &&
+                baOk(f.whiff) &&
+                f.whiff <= 0.12 &&
+                !weakSet[f.key]
+              );
+            })
+            .sort(function (a, b) {
+              return a.whiff - b.whiff;
+            })
+            .slice(0, 2);
+          for (var ci = 0; ci < contactFams.length; ci++) {
+            S.push(
+              tp("s_fam_contact", {
+                label: pitchFamilyDisplayName(contactFams[ci].key),
+                v: baPct(contactFams[ci].whiff),
+              })
+            );
+          }
+
+          // ── 투수 손 · 스프레이 ──
+          if (
+            m.handL.seen >= 4 &&
+            m.handR.seen >= 4 &&
+            baOk(m.handL.evAvg) &&
+            baOk(m.handR.evAvg) &&
+            Math.abs(m.handL.evAvg - m.handR.evAvg) >= 8
+          ) {
+            var lStrong = m.handL.evAvg > m.handR.evAvg;
+            K.push(
+              tp("k_hand", {
+                strong: baT(lStrong ? "hand_l" : "hand_r"),
+                weak: baT(lStrong ? "hand_r" : "hand_l"),
+                rec: baT(lStrong ? "rec_r" : "rec_l"),
+              })
+            );
+            W.push(
+              tp("w_hand", { weak: baT(lStrong ? "hand_r" : "hand_l") })
+            );
+          }
+          var sp = m.spray;
+          if (sp.n >= 6) {
+            var lp = Math.round((100 * sp.left) / sp.n);
+            var rp = Math.round((100 * sp.right) / sp.n);
+            var cp = Math.round((100 * sp.center) / sp.n);
+            if (sp.left >= sp.right * 2 && sp.left >= 4) {
+              K.push(
+                tp("k_pull_left_pct", { l: lp, n: sp.n })
+              );
+            } else if (sp.right >= sp.left * 2 && sp.right >= 4) {
+              K.push(
+                tp("k_pull_right_pct", { r: rp, n: sp.n })
+              );
+            } else {
+              S.push(tp("s_spray_even", {}));
+              if (cp >= 35) S.push(tp("s_oppo", { c: cp }));
+            }
+          }
+
+          // ── 카운트 · 주자 ──
+          if (m.two.pa >= 4 && baOk(m.two.kRate) && m.two.kRate >= 0.5) {
+            W.push(tp("w_two_k", { v: baPct(m.two.kRate) }));
+            K.push(tp("k_two_k", {}));
+          }
+          if (m.two.pa >= 4 && baOk(m.two.kRate) && m.two.kRate <= 0.35)
+            S.push(tp("s_two_contact", { v: baPct(m.two.kRate) }));
+          if (m.first.pa >= 4 && baOk(m.first.avg) && m.first.avg >= 0.4) {
+            K.push(tp("k_first_avg", { v: baDec3(m.first.avg) }));
+            S.push(tp("s_first", { v: baDec3(m.first.avg) }));
+          }
+          if (m.first.pa >= 4 && baOk(m.first.avg) && m.first.avg <= 0.15) {
+            W.push(tp("w_first", { v: baDec3(m.first.avg) }));
+            K.push(tp("k_first_passive", {}));
+          }
+          if (m.ahead.pa >= 4 && baOk(m.ahead.avg) && m.ahead.avg >= 0.35) {
+            W.push(tp("w_ahead_avg", {}));
+            K.push(tp("k_ahead_avg", {}));
+            S.push(tp("s_ahead", { v: baDec3(m.ahead.avg) }));
+          }
+          if (m.behind.pa >= 4 && baOk(m.behind.avg) && m.behind.avg <= 0.18) {
+            W.push(tp("w_behind", { v: baDec3(m.behind.avg) }));
+            K.push(tp("k_behind", {}));
+          }
+          if (m.risp.pa >= 3 && baOk(m.risp.avg) && m.risp.avg >= 0.35)
+            S.push(tp("s_risp", { v: baDec3(m.risp.avg) }));
+          if (m.risp.pa >= 3 && baOk(m.risp.avg) && m.risp.avg <= 0.18) {
+            W.push(tp("w_risp", { v: baDec3(m.risp.avg) }));
+            K.push(tp("k_risp", {}));
+          }
+          if (m.empty.pa >= 6 && baOk(m.empty.avg) && m.empty.avg >= 0.32)
+            S.push(tp("s_empty", { v: baDec3(m.empty.avg) }));
+          if (m.empty.pa >= 6 && baOk(m.empty.avg) && m.empty.avg <= 0.18)
+            W.push(tp("w_empty", { v: baDec3(m.empty.avg) }));
+
+          // ── 리그 하위권 (백분위) ──
+          if (baPoor(m, "evAvg"))
+            W.push(
+              tp("w_league", {
+                label: "EV",
+                v: baInt(m.evAvg) + "km/h",
+                pct: baPctLabel(m, "evAvg"),
+              })
+            );
+
+          if (K.length === 0) K.push(baT("fb_scouting"));
+          if (W.length === 0) W.push(baT("fb_weakness"));
+
+          return { strengths: S, weaknesses: W, improvements: I, scouting: K };
+        }
+
+        function fillAnalysisList(elId, items) {
+          var ul = document.getElementById(elId);
+          if (!ul) return;
+          ul.replaceChildren();
+          if (!items || !items.length) {
+            var li0 = document.createElement("li");
+            li0.className = "analysis-empty";
+            li0.textContent = t("analysisEmpty");
+            ul.appendChild(li0);
+            return;
+          }
+          for (var i = 0; i < items.length; i++) {
+            var li = document.createElement("li");
+            li.textContent = items[i];
+            ul.appendChild(li);
+          }
+        }
+
+        function renderBattingAnalysis(rows, ix, bZone) {
+          var sec = document.getElementById("section-analysis");
+          if (!sec) return;
+          if (!rows || !rows.length) {
+            sec.hidden = true;
+            fillAnalysisList("analysis-strengths", []);
+            fillAnalysisList("analysis-weaknesses", []);
+            fillAnalysisList("analysis-improvements", []);
+            fillAnalysisList("analysis-scouting", []);
+            return;
+          }
+          var m = computeBatterAnalysis(rows, ix, bZone);
+          enrichBatterAnalysisForSummary(
+            m,
+            rows,
+            ix,
+            bZone,
+            reportCache && reportCache.leagueMetrics
+          );
+          var sum = buildBatterAnalysisSummary(m);
+          fillAnalysisList("analysis-strengths", sum.strengths);
+          fillAnalysisList("analysis-weaknesses", sum.weaknesses);
+          fillAnalysisList("analysis-improvements", sum.improvements);
+          fillAnalysisList("analysis-scouting", sum.scouting);
           sec.hidden = false;
         }
 
@@ -6198,6 +7374,8 @@
               })(slotR);
             }
           });
+
+          renderBattingAnalysis(rows, ix, bZonePm);
 
           var miss = [];
           if (idxLaunch < 0) miss.push(t("missLaunch"));
