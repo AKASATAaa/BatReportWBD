@@ -1,0 +1,12 @@
+# Electron (배포 불필요)
+batting-report-electron/node_modules/
+batting-report-electron/dist/
+batting-report-electron/out/
+
+# 병합본 폴더 (Pages에 포함하지 않음)
+전부다합친거/
+
+# OS / 에디터
+.DS_Store
+Thumbs.db
+*.log
